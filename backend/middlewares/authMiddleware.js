@@ -1,26 +1,34 @@
 import { verifyToken } from '../utils/jwtUtils.js';
+import { sendError } from '../utils/responseHelper.js';
 
+/**
+ * Protect routes - Verification of HttpOnly Session Cookie
+ */
 export const protect = async (req, res, next) => {
   try {
     const token = req.cookies.pawzz_token;
     
     if (!token) {
-      return res.status(401).json({ success: false, message: 'Not authorized' });
+      return sendError(res, 'UNAUTHORIZED', 'Session expired. Please login again.', 401);
     }
     
     const decoded = verifyToken(token);
     req.user = decoded;
     next();
   } catch (error) {
-    return res.status(401).json({ success: false, message: 'Token invalid or expired' });
+    return sendError(res, 'UNAUTHORIZED', 'Invalid or expired session', 401);
   }
 };
 
-export const requireRole = (roles) => {
+/**
+ * RBAC Restriction - Ensures user has one of the allowed roles
+ */
+export const requireRole = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
-      return res.status(403).json({ success: false, message: 'Permission denied' });
+      return sendError(res, 'FORBIDDEN', `Access denied: Role '${req.user.role}' not authorized`, 403);
     }
     next();
   };
 };
+
