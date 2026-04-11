@@ -5,6 +5,8 @@ import { AuthProvider } from "@/context/AuthContext";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
 const jakarta = Plus_Jakarta_Sans({ 
   subsets: ["latin"],
   variable: "--font-plus-jakarta",
@@ -20,17 +22,22 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
+
   return (
     <html lang="en">
       <body className={`${jakarta.variable} font-sans bg-brand-bg antialiased`}>
-        <AuthProvider>
-          <Navbar />
-          <div className="pt-16 min-h-screen">
-            {children}
-          </div>
-          <Footer />
-        </AuthProvider>
+        <GoogleOAuthProvider clientId={clientId}>
+          <AuthProvider>
+            <Navbar />
+            <div className="pt-16 min-h-screen">
+              {children}
+            </div>
+            <Footer />
+          </AuthProvider>
+        </GoogleOAuthProvider>
       </body>
     </html>
   );
 }
+

@@ -20,7 +20,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
 }
 
-axios.defaults.baseURL = 'http://localhost:3000/api';
+axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 axios.defaults.withCredentials = true;
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = async (googleToken: string, role?: string) => {
     try {
-      const response = await axios.post('/api/auth/login', { token: googleToken, role });
+      const response = await axios.post('/auth/login', { token: googleToken, role });
       // Backend returns { success: true, data: { user: {...} }, message: "..." }
       setUser(response.data.data.user);
     } catch (error) {
@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = async () => {
     try {
-      await axios.post('/api/auth/logout');
+      await axios.post('/auth/logout');
       setUser(null);
     } catch (error) {
       console.error('Logout failed:', error);
@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await axios.get('/api/auth/me');
+        const response = await axios.get('/auth/me');
         setUser(response.data.data.user);
       } catch (error) {
         setUser(null);
@@ -67,6 +67,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
     checkAuth();
   }, []);
+
 
 
   return (

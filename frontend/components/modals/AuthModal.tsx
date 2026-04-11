@@ -9,9 +9,12 @@ interface AuthModalProps {
   onClose: () => void;
 }
 
+import { GoogleLogin } from '@react-oauth/google';
+
 const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const { login } = useAuth();
   const [selectedRole, setSelectedRole] = React.useState<string | null>(null);
+  const [error, setError] = React.useState<string | null>(null);
 
   const roles = [
     { id: 'Vet Clinic', name: 'Vet Clinic', icon: '🏥', description: 'Doctors & Clinics' },
@@ -19,13 +22,18 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     { id: 'Volunteer / City Lead', name: 'Volunteer', icon: '🤝', description: 'Helping hands' },
   ];
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleSuccess = async (credentialResponse: any) => {
     if (!selectedRole) {
-      alert("Please select a role first!");
+      setError("Please select a role first!");
       return;
     }
-    // Simulate login for now - we'll integrate the real SDK in the next step
-    console.log(`Logging in as ${selectedRole}...`);
+    
+    try {
+      await login(credentialResponse.credential, selectedRole);
+      onClose();
+    } catch (err) {
+      setError("Authentication failed. Please try again.");
+    }
   };
 
   return (
@@ -62,11 +70,14 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               <p className="text-gray-500">Select your role to continue</p>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 mb-8">
+            <div className="grid grid-cols-1 gap-4 mb-6">
               {roles.map((role) => (
                 <div
                   key={role.id}
-                  onClick={() => setSelectedRole(role.id)}
+                  onClick={() => {
+                    setSelectedRole(role.id);
+                    setError(null);
+                  }}
                   className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all cursor-pointer group ${
                     selectedRole === role.id 
                       ? 'border-brand-primary bg-brand-bg/50 shadow-md translate-x-1' 
@@ -93,18 +104,23 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               ))}
             </div>
 
-            <button
-              onClick={handleGoogleLogin}
-              disabled={!selectedRole}
-              className={`w-full flex items-center justify-center gap-3 py-4 px-6 rounded-2xl font-bold transition-all shadow-lg ${
-                selectedRole 
-                  ? 'bg-brand-dark text-white hover:bg-black hover:shadow-xl active:scale-95' 
-                  : 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
-              }`}
-            >
-              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5" />
-              Continue with Google
-            </button>
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 text-red-500 text-xs font-bold rounded-xl text-center">
+                {error}
+              </div>
+            )}
+
+            <div className={`transition-opacity ${!selectedRole ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={() => setError("Google Login Failed")}
+                useOneTap
+                theme="outline"
+                shape="pill"
+                width="100%"
+                text="continue_with"
+              />
+            </div>
             
             <p className="mt-6 text-center text-xs text-gray-400">
               By continuing, you agree to PAWZZ’s <span className="underline cursor-pointer hover:text-gray-600">Terms of Service</span> and <span className="underline cursor-pointer hover:text-gray-600">Privacy Policy</span>.
