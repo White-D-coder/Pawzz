@@ -1,45 +1,186 @@
-# 🏗️ PAWZZ | Technical Architecture & System Blueprint
+# 🏗️ PAWZZ | Technical Architecture & System Design
+> **The Blueprint for a Scalable, Secure Pet Care Ecosystem.**
 
-## 2. AUTHENTICATION & AUTHORIZATION (OAuth 2.0 & RBAC)
-* **Frontend Login Modal**: Centered modal with dark overlay (bg-black/50 backdrop-blur-sm). Modal card (bg-white rounded-xl shadow-2xl p-8). "Continue with Google" button with official G-logo.
-* **Backend Auth Flow (POST /auth/login)**: Receive Google OAuth 2.0 token. Verify using `google-auth-library`.
-* **Session Management**: Generate secure JWT (contains _id, email, role). Set in HTTP-only, Secure, SameSite=Strict cookie.
-* **Role-Based Access Control (RBAC)**: Roles: Vet Clinic, NGO, Service Provider, Volunteer / City Lead, Admin. Middleware `requireRole(['Admin'])` blocks unauthorized access with 403 Forbidden.
+## 1. Architecture Overview
+The PAWZZ platform is architected as a modern, decoupled system optimized for high-concurrency booking, real-time audio processing, and SEO-critical data discovery. We leverage a **Next.js 14 App Router** frontend for exceptional performance and SSR, paired with a robust **Node.js/Express** backend for complex business logic and background processing.
 
-## 3. DIRECTORY SYSTEM (SEO & DATA FETCHING)
-* **Next.js SSR Implementation**: Utilize SSR for listing data pre-rendering. Fetch initial data server-side, client-side hydration for filtering.
-* **Hero & Search Filters**: full-width hero (bg-teal-50). Search console (bg-white rounded-xl shadow-lg p-4). Location Input, Category Dropdown, Services Filter.
-* **Listing Card UI**: grid-cols-1 md:grid-cols-2 lg:grid-cols-3. h-48 w-full image. Badge for NGO/Clinic. border-t border-gray-100 bg-gray-50 footer.
-* **Data Masking (Access Control)**: Public users see limited data (Name, Category, Location). Hide phone, address, and email for `!isAuthenticated`.
+```mermaid
+graph TD
+    User((User)) -->|HTTPS| LoadBalancer[Vercel / Cloudflare]
+    LoadBalancer -->|SSR / Client-side| Frontend[Next.js 14 Frontend]
+    Frontend -->|API Requests| API[Express API Gateway]
+    
+    subgraph "Backend Services"
+        API -->|Auth| AuthSvc[JWT RBAC Service]
+        API -->|Booking| BookSvc[Atomic Booking Engine]
+        API -->|Volunteer| VolSvc[Media & Transcription Service]
+        AuthSvc -->|Verify| Google[Google OAuth 2.0]
+    end
+    
+    subgraph "Data & Media Layer"
+        BookSvc -->|FindAndUpdate| DB[(MongoDB Atlas)]
+        VolSvc -->|Stream| GridFS[(MongoDB GridFS)]
+        VolSvc -->|Spawn| Worker[Worker Thread]
+        Worker -->|API| Whisper[OpenAI Whisper API]
+    end
+    
+    API -->|Payments| RZP[Razorpay Integration]
+```
 
-## 4. BOOKING SYSTEM & ATOMIC CONCURRENCY
-* **Frontend Booking Modal**: Step 1 (Date Selection), Step 2 (Time Slot Selection - grid-cols-3), Step 3 (Confirmation).
-* **Backend Concurrency Logic (POST /book)**: Use atomic database operations. Use `findOneAndUpdate` with query filter: `{ providerId: ID, timeSlot: exactTime, status: 'available' }`. Return 409 Conflict if modified by another user.
-* **State Management**: pending, confirmed, or cancelled.
+---
 
-## 5. VOLUNTEER SYSTEM: CUSTOM AUDIO PIPELINE & WORKER THREADS
-* **Frontend UI**: React Hook Form validation. Voice Recording Component (MediaRecorder API). Timer (00:00). HTML5 `<audio controls>` preview.
-* **Backend Storage (MongoDB GridFS)**: Handle file uploads via Multer. Stream raw audio Blob into MongoDB GridFS bucket. Save GridFS file ID as audio URL.
-* **Asynchronous AI Transcription (Worker Threads)**: Whisper for speech-to-text. Use native Node.js Worker Thread. Endpoint responds with 202 Accepted immediately. Worker thread updates document with transcript.
+## 2. Recommended Technology Stack
+| Layer | Technology | Rationale |
+| :--- | :--- | :--- |
+| **Frontend Framework** | Next.js 14 (App Router) | Best-in-class SEO, performance, and developer experience. |
+| **Styling** | Tailwind CSS | Rapid UI development with strict adherence to brand guidelines. |
+| **Typography** | Plus Jakarta Sans | Modern, approachable font via `next/font/google`. |
+| **Backend Framework** | Express.js | Lightweight and flexible for high-performance API services. |
+| **Database** | MongoDB Atlas | Document-driven flexibility for pet care listings and metadata. |
+| **ORM/ODM** | Mongoose | Strict schema enforcement and powerful middleware. |
+| **Authentication** | Google OAuth 2.0 + JWT | Seamless, secure user onboarding without password fatigue. |
+| **File Storage** | MongoDB GridFS | Integrated storage for raw audio blobs without external S3 latency. |
+| **AI Transcription** | OpenAI Whisper | Industry-leading accuracy for multi-lingual volunteer audio. |
+| **Payments** | Razorpay | Robust checkout and webhook infrastructure for the Indian market. |
 
-## 6. SECURE ADMIN PANEL & MODERATION WORKFLOW
-* **Layout**: Fullscreen layout. Sidebar (w-64 bg-gray-900). Content area (bg-gray-50).
-* **Volunteer Review (GET /admin/volunteers)**: Data table with Review modal. Render HTML5 `<audio>` from GridFS. Render read-only text area for AI transcript. "Accept" (bg-emerald-500) and "Reject" (bg-red-500) buttons.
-* **Listing Approval (PATCH /admin/approve)**: Queue of new clinic/NGO signups with verification status.
+---
 
-## 7. PAYMENT GATEWAY INTEGRATION
-* **Integration**: Razorpay API.
-* **Workflow**: Frontend initializes Razorpay checkout modal.
-* **Backend Webhook**: Verify webhook signature using crypto module (HMAC SHA256). Update status only upon verified receipt.
+## 3. Data Model & ER Diagram
+All models implementation include `timestamps: true` for audit trails and indexing on critical query fields.
 
-## 8. STRICT DATA MODELS (MongoDB Atlas / Mongoose)
-* **Users**: email, role (enum), profile (nested object name/phone/avatar).
-* **Listings**: type (enum clinic/ngo/service), location (GeoJSON), services (Array), verification_status (enum).
-* **Bookings**: userId, providerId, time_slot (Date, indexed), status (enum).
-* **Volunteer Submissions**: userId, audio_url (GridFS ID), transcript, status (enum).
+```mermaid
+erDiagram
+    USER ||--o{ BOOKING : initiates
+    USER ||--o{ VOLUNTEER_SUBMISSION : submits
+    LISTING ||--o{ BOOKING : hosts
+    
+    USER {
+        string _id PK
+        string email UK
+        string role "Admin | NGO | Clinic | User"
+        object profile "name, phone, avatar"
+        date lastLogin
+    }
+    
+    LISTING {
+        string _id PK
+        string type "clinic | ngo | service"
+        string name
+        object location "GeoJSON Point"
+        string[] services
+        string verification_status "pending | approved | rejected"
+        string phone_masked
+        string phone_full
+    }
+    
+    BOOKING {
+        string _id PK
+        objectId userId FK
+        objectId providerId FK
+        date time_slot UK
+        string status "pending | confirmed | cancelled"
+        string payment_ref
+    }
+    
+    VOLUNTEER_SUBMISSION {
+        string _id PK
+        objectId userId FK
+        string audio_url "GridFS Link"
+        string transcript
+        string status "pending review | accepted | rejected"
+        string processing_error
+    }
+```
 
-## 9. SECURITY & NON-FUNCTIONAL REQUIREMENTS
-* **Dual-Layer Validation**: Zod or Joi on backend. 400 Bad Request for failures.
-* **API Security**: helmet, cors (strict), express-rate-limit.
-* **Performance**: <200ms latency goal. Heavy indexing on email, role, location, and time_slot.
-* **Deployment**: Next.js (Vercel), Backend (AWS/Render), DB (MongoDB Atlas).
+---
+
+## 4. Implementation Deep-Dives
+
+### 🛡️ Authentication & Authorization (RBAC)
+We utilize a combination of **Google OAuth 2.0** for identity verification and **JWT (JSON Web Tokens)** for session persistence.
+- **Secure Sessions**: JWTs are stored in **HttpOnly, Secure, SameSite=Strict cookies** to mitigate XSS and CSRF risks.
+- **RBAC Middleware**: A central `requireRole` middleware checks the decoded token payload against the resource's required permissions before allowing the request to hit the controller.
+
+### 📅 Atomic Booking Concurrency
+To handle an initial load of 10,000 users, PAWZZ prevents double-booking through atomic database operations rather than application-side logic.
+- **The Flow**:
+  1. Frontend fetches availability from a deterministic slots table.
+  2. User selects a slot.
+  3. Backend executes `findOneAndUpdate({ slot, status: 'available' }, { status: 'locked', userId })`.
+  4. If the write returns `null`, the slot was taken milliseconds prior.
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant A as API
+    participant D as Database
+    
+    U->>A: POST /book-slot
+    A->>D: findOneAndUpdate(status: 'available')
+    alt Slot Available
+        D-->>A: Document Updated
+        A-->>U: 200 OK (Booking Secured)
+    else Slot Taken
+        D-->>A: null
+        A-->>U: 409 Conflict (Refresh Slots)
+    end
+```
+
+### 🎙️ Volunteer Audio Pipeline (GridFS + Workers)
+Audio applications are processed asynchronously to avoid blocking the main event loop.
+- **Storage**: Raw audio blobs are streamed directly into **MongoDB GridFS** via `multer-gridfs-storage`.
+- **Worker Threads**: The server spawns a native Node.js worker thread to pull the audio, send it to the Whisper API, and update the transcription field in the background.
+
+```mermaid
+graph LR
+    Upload[User Upload] -->|Stream| GridFS
+    GridFS -->|202 Accepted| Response[Immediate User Feedback]
+    Response -->|Spawn| Worker[Node Worker Thread]
+    Worker -->|Buffer| Whisper[OpenAI Whisper]
+    Whisper -->|Text| Update[Database Update]
+```
+
+### 💰 Payment & Webhook Verification
+Payment integrity is maintained through server-side signature verification.
+- **Workflow**: Razorpay Checkout modal handles primary interaction.
+- **Integrity**: The backend listens to a restricted webhook. Every payload is verified using **HMAC SHA256** with the Razorpay Secret before the booking status is updated to `confirmed`.
+
+---
+
+## 5. Security & Availability Architecture
+- **API Security**: Implementation of `helmet` for secure headers, `cors` configured to specific origins, and `express-rate-limit` to prevent brute-force attacks.
+- **Data Masking**: SSR logic in Next.js renders blurred or placeholder data for unauthenticated users, protecting provider privacy.
+- **Validation**: Strict schema validation using **Zod** on both frontend and backend ensures data integrity.
+
+---
+
+## 6. Deployment & Scaling
+### Environment Strategy
+- **Production**: Vercel (Frontend) + Render/AWS (Backend) + MongoDB Atlas.
+- **Scaling**: Horizontal scaling of the Express backend behind a load balancer; MongoDB Atlas auto-scaling for the storage layer.
+
+### Recommended Folder Structure
+```text
+/pawzz
+  /frontend
+    /app           # Next.js App Router
+    /components    # UI Design System
+    /context       # Auth state
+    /services      # API wrappers
+  /backend
+    /controllers   # Request handling
+    /models        # Mongoose schemas
+    /middlewares   # RBAC & Headers
+    /workers       # Transcription threads
+    /utils         # JWT & Constants
+```
+
+---
+
+## 7. Performance Goals
+- **API Latency**: <200ms for indexed read queries.
+- **SEO Score**: >90 Lighthouse performance for directory pages.
+- **Uptime**: 99.9% availability for the booking engine.
+
+**PAWZZ is engineered for trust, scale, and connectivity.**
+ Riverside Building, Indore, India.

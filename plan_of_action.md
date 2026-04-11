@@ -1,65 +1,120 @@
-# 🚀 PAWZZ — HYPER-DETAILED END-TO-END DEVELOPER BLUEPRINT
+# 🗺️ PAWZZ | Plan of Action & Execution Roadmap
+> **The Path to Connecting Pet Care, Together.**
 
-## 0. NON-NEGOTIABLE EXECUTION RULES
-Before writing any code, understand the entire product flow end to end. The final system must not feel like isolated pages stitched together. It should feel like one coherent product with consistent design language, strict access control, predictable state transitions, and clear separation of responsibilities between frontend, backend, database, and background workers.
+## 1. Build Strategy & Approach
+The PAWZZ development strategy is focused on **speed-to-market** without compromising on **technical integrity**. We adopt an incremental development model where core infrastructure (Auth and Data) is established first, followed by specialized modules (Booking, Volunteer Pipelines).
 
-* Generate code that is directly usable.
-* Keep all features aligned with the stated requirements.
-* Use the specified stack only unless a supporting utility is necessary.
-* Do not invent product features outside the brief.
-* Do not remove or weaken any listed functionality.
-* Prefer maintainable patterns over clever shortcuts.
-* Make sure the system is secure by default.
-* Ensure that data flow is explicit and traceable.
-* Ensure that user experience remains simple even if the backend logic is complex.
-* Structure the code so each feature can be tested independently.
-* Add comments where architectural decisions need explanation.
-* Separate concerns cleanly across app routes, reusable components, services, middleware, utilities, and models.
-* Every async flow must have loading, success, and error states.
-* Every sensitive action must have authorization checks.
-* Every critical database write must be atomic or safely handled with conflict logic.
-* Every user-facing form must validate input before submission and again on the server.
+### Core Principles
+- **Agile Sprints**: 2-week development cycles ending in a demo.
+- **Fail-Safe Booking**: Prioritize atomic operations above all else.
+- **Micro-Interactions**: Implement design language (animations/feedback) early to maintain brand trust.
 
-## 10. PROJECT STRUCTURE AND CODE ORGANIZATION
-The codebase must be organized to make navigation obvious.
+---
 
-**Frontend**
-* /app
-* /components
-* /components/ui
-* /components/layout
-* /components/forms
-* /components/modals
-* /context
-* /hooks
-* /lib
-* /services
-* /styles
-* /types
+## 2. Phased Implementation Roadmap
 
-**Backend**
-* /controllers
-* /routes
-* /models
-* /middlewares
-* /workers
-* /utils
-* /config
-* /services
-* /validators
+```mermaid
+graph TD
+    P1[Phase 1: Foundation] --> P2[Phase 2: Auth & RBAC]
+    P2 --> P3[Phase 3: Directory & SEO]
+    P3 --> P4[Phase 4: Booking Logic]
+    P3 --> P5[Phase 5: Volunteer Pipeline]
+    P4 --> P6[Phase 6: Admin Dashboard]
+    P5 --> P6
+    P6 --> P7[Phase 7: Payments]
+    P7 --> P8[Phase 8: Launch Prep]
+```
 
-## 13. REQUIRED OUTPUT FORMAT
-When generating the project, output in this order:
-1. Brief architecture overview.
-2. Complete directory structure.
-3. Tailwind configuration.
-4. Shared types and utilities.
-5. Frontend pages and components.
-6. Backend routes, controllers, middleware, models, and services.
-7. Worker thread implementation.
-8. Environment variables example.
-9. Deployment notes.
-10. Any critical assumptions or limitations.
+### 🗓️ Phase 1: Design System & Base Layout
+- **Objective**: Establish the visual identity and core UI components.
+- **Tasks**:
+  - Setup Tailwind config with exact hex values (#005F73, #0A9396, #EE9B00, #FFF9F4).
+  - Implement **Plus Jakarta Sans** and global typography scale.
+  - Build atomic components: Primary Button, Rounded Cards, Modal Backdrop.
+- **Done Criteria**: A shared component library capable of rendering the Hero section.
 
-## 14. FINAL SYSTEM OBJECTIVE
-The final system should feel like a real veterinary service platform that can be launched, tested, and extended. It should allow users to discover providers, book slots, submit volunteer applications, and let admins moderate content securely. Every feature must feel internally consistent. Every state transition must be deliberate. Every sensitive action must be guarded. Every database write must be defensible. Every public-facing page must be understandable without login, while protected details remain locked until authorization is granted.
+### 🔐 Phase 2: Project Setup & Auth (RBAC)
+- **Objective**: Secure the platform and handle user sessions.
+- **Tasks**:
+  - Initialize Next.js App Router and Express Backend.
+  - Setup MongoDB Atlas connection with Mongoose.
+  - Implement Google OAuth login and HttpOnly JWT cookies.
+- **Done Criteria**: Users can log in and session is persisted across routes.
+
+### 📂 Phase 3: Directory & Listings (SSR)
+- **Objective**: Create the searchable, SEO-friendly directory.
+- **Tasks**:
+  - Build Listing Schema and CRUD operations.
+  - Implement Next.js SSR for pre-rendering public listings.
+  - Add search and category filters with GeoJSON indexing.
+- **Done Criteria**: Publicly searchable listing pages with data masking active.
+
+### 📅 Phase 4: Atomic Booking Workflow
+- **Objective**: Implement the fault-tolerant booking system.
+- **Tasks**:
+  - Build the 3-step Booking Modal (Calendar -> Slots -> Summary).
+  - Implement `findOneAndUpdate` atomic locking in the backend.
+  - Setup conflict handling UI (shake animation + grid refresh).
+- **Done Criteria**: Multiple users can attempt simultaneous booking with zero double-bookings.
+
+### 🎙️ Phase 5: Volunteer Pipeline & Media
+- **Objective**: Audio application and AI transcription.
+- **Tasks**:
+  - Build browser-based recording UI with `MediaRecorder API`.
+  - Setup GridFS for storage and Worker Thread for Whisper transcription.
+  - Implement application status tracking for volunteers.
+- **Done Criteria**: Audio file uploaded, stored, and transcribed in the background.
+
+### 🛡️ Phase 6: Admin Dashboard & Moderation
+- **Goal**: Provide tools for listing and volunteer verification.
+- **Tasks**:
+  - Build sidebar-nav dashboard for Roles: Admin, City Lead.
+  - Implement high-density tables for moderation queues.
+- **Done Criteria**: Admin can view transcripts, listen to audio, and verify listings.
+
+### 💰 Phase 7: Payments & Webhook Verification
+- **Goal**: Process transactions for paid services.
+- **Tasks**:
+  - Integrate Razorpay bridge on the frontend.
+  - Setup secure HMAC SHA256 webhook verification.
+- **Done Criteria**: Bookings confirmed only after verified payment receipt.
+
+---
+
+## 3. Development & Launch Checklists
+
+### ✅ Development Checklist
+- [ ] Zod schema validation on ALL API inputs.
+- [ ] Responsive design verified for Mobile, Tablet, and Desktop.
+- [ ] Error boundary handling in Next.js for all page transitions.
+- [ ] SEO Meta-tags (OpenGraph/Twitter) dynamic for every listing.
+
+### 🧪 QA & Testing Priorities
+- **Concurrency Test**: Simulate 100 simultaneous requests on 1 booking slot.
+- **Media Test**: Verify audio recording across Chrome, Safari, and Mobile.
+- **Auth Test**: Ensure `requireRole` middleware prevents unauthorized dashboard access.
+
+### 🚀 Final Launch Readiness
+| Task | Owner | Priority |
+| :--- | :--- | :--- |
+| **Final Security Audit** | Security Lead | Critical |
+| **API Rate Limiting Check** | DevOps | High |
+| **Razorpay Production Keys** | Admin | Critical |
+| **Lighthouse Performance Scan** | Frontend Lead | Medium |
+
+---
+
+## 4. Risks & Mitigations
+- **Risk**: Whisper API latency during peak volunteer applications.
+  - **Mitigation**: Use Worker Threads and keep the status as "Processing" to avoid blocking the user.
+- **Risk**: Razorpay webhook failure due to network issues.
+  - **Mitigation**: Implement idempotency and a "Check Status" fallback route for users.
+
+---
+
+## 5. Maintenance & Future Expansion
+- **Phase 9+**: AI Chatbots for initial pet care advice.
+- **Phase 10+**: Integrated Pet Health Records (Digital Passports).
+- **Phase 11+**: Multi-city localized community events module.
+
+**PAWZZ: Built for reliability, scaled for compassion.**
