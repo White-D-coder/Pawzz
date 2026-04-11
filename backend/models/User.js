@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Indexes for performance as per specs
-userSchema.index({ email: 1 });
 userSchema.index({ role: 1 });
 
 export const User = mongoose.model('User', userSchema);
+

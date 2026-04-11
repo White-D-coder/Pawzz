@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { User } from '../models/User.js';
 import { verifyGoogleToken } from '../services/authService.js';
 import { signToken } from '../utils/jwtUtils.js';
@@ -18,7 +19,24 @@ export const googleLogin = async (req, res) => {
     const payload = await verifyGoogleToken(token);
     const { email, name, picture } = payload;
 
-    // 2. Upsert User (Update existing or create new with role)
+    // 2. RESILIENCE: Handle Offline Database for local development
+    if (mongoose.connection.readyState !== 1 && process.env.NODE_ENV === 'development') {
+      console.warn('🚧 DB DISCONNECTED: Simulating user for development');
+      const mockUser = { id: 'mock_id', email, role: role || 'Volunteer / City Lead', profile: { name, avatar: picture } };
+      const jwtToken = signToken(mockUser);
+      
+      res.cookie('pawzz_token', jwtToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000
+      });
+
+      return sendSuccess(res, { user: mockUser }, 'Authentication successful (MOCK MODE)');
+    }
+
+    // 3. Upsert User (Update existing or create new with role)
+
     let user = await User.findOne({ email });
     
     if (!user) {

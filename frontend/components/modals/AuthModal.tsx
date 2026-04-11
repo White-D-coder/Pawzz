@@ -117,7 +117,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 useOneTap
                 theme="outline"
                 shape="pill"
-                width="100%"
+                width="350"
                 text="continue_with"
               />
             </div>
