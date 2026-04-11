@@ -1,127 +1,45 @@
-# 🐾 PAWZZ | Brand Identity & UI System
-> **Connecting Pet Care, Together.**
+# 🎨 PAWZZ | UI/UX Design System Specification
 
-![PAWZZ Hero Mockup](/Users/deeptanubhunia/.gemini/antigravity/brain/60afe4ae-2cb3-4cc2-8e2f-cfc3e04b003d/pawzz_hero_mockup_1775934044134.png)
+## 1. GLOBAL UI/UX DESIGN SYSTEM & TAILWIND SPECIFICATIONS
+The application must feel trustworthy, modern, and accessible. Use Tailwind CSS strictly. Consistent design language, spacing rhythm, color usage, and component behavior.
 
-## 💎 Brand Personality
-`Trustworthy` · `Warm` · `Modern` · `Community-first`
+* Use soft surfaces, subtle shadows, clean borders, and accessible contrast.
+* Prefer whitespace over clutter.
+* Consistent card treatment across listings, forms, and dashboards.
+* Strong hierarchy in typography.
+* Legible forms.
+* Responsive design (mobile, tablet, laptop, desktop).
+* Avoid visually noisy elements.
 
----
+### A. Color Palette & Typography
+* **Primary Brand (Teal)**: `#0F766E` (Tailwind teal-700). Primary actions, active states.
+* **Secondary Brand (Amber)**: `#F59E0B` (Tailwind amber-500). Warnings, secondary badges.
+* **Backgrounds**: Global background `#F9FAFB` (gray-50). Surface backgrounds `#FFFFFF` (white).
+* **Text Colors**: Headings `#111827` (gray-900), Body `#4B5563` (gray-600), Placeholder `#9CA3AF` (gray-400).
+* **Semantic Colors**: Success `#10B981` (emerald-500), Error `#EF4444` (red-500), Info `#3B82F6` (blue-500).
+* **Typography**: `next/font/google` using **Inter**. Headings font-bold tracking-tight; body font-normal leading-relaxed.
 
-## 🎨 Color Palette
-The PAWZZ palette is inspired by the warmth of the sun and the serenity of the ocean, creating a balance of professional trust and welcoming energy.
+### B. Standardized Button Components
+* **Primary**: `bg-teal-700 text-white font-medium py-2 px-4 rounded-lg shadow-md transition-all duration-200 hover:bg-teal-800 hover:shadow-lg active:scale-95`.
+* **Secondary/Outline**: `bg-transparent text-teal-700 border-2 border-teal-700 font-medium py-2 px-4 rounded-lg transition-all duration-200 hover:bg-teal-50 active:scale-95`.
+* **Danger**: `bg-red-500 text-white font-medium py-2 px-4 rounded-lg hover:bg-red-600 shadow-sm active:scale-95`.
+* **Disabled**: `opacity-50 cursor-not-allowed pointer-events-none`.
+* **Loading**: Render a spinning SVG circle (animate-spin) inside the button.
 
-### Core Brand Colors
-| Role | Color | Hex | Sample |
-| :--- | :--- | :--- | :--- |
-| **Primary Dark** | Sky Blue | `#005F73` | 🔵 |
-| **Primary Action** | Teal Ocean | `#0A9396` | 🌊 |
-| **Hover Accents** | Summer Sun | `#EE9B00` | ☀️ |
-| **Global Background** | White Cloud | `#FFF9F4` | ☁️ |
+### C. Global Layouts & Navigation
+* **Navbar**: Fixed top, `bg-white shadow-sm z-50 h-16`.
+* **Left**: Pawzz Logo (Teal text, bold, text-xl).
+* **Center (Desktop)**: Links with `hover:text-teal-700`.
+* **Right**: Unauthenticated: "Login with Google" outline button. Authenticated: Circular User Avatar (w-10 h-10). Dropdown menu with Profile, Dashboard, Logout.
+* **Mobile**: Navigation collapses cleanly into a menu drawer or dropdown.
 
-### Semantic & Surface
-| Role | Hex | Color |
-| :--- | :--- | :--- |
-| **Success** | `#10B981` | 🟢 Success |
-| **Error** | `#EF4444` | 🔴 Error |
-| **Info** | `#3B82F6` | 🔵 Info |
-| **Headings** | `#0D2B2E` | Deep Teal |
-| **Body Text** | `#4B5563` | Slate Gray |
-| **Surface (Cards)** | `#FFFFFF` | Pure White |
-| **Borders** | `#E5E7EB` | Soft Gray |
-
----
-
-## 🖋️ Typography
-We use **Plus Jakarta Sans** via `next/font/google` for a modern, approachable feel.
-
-### Type Scale
-- **H1**: `36px` | 800 Weight | `PAWZZ` Wordmark
-- **H2**: `24px` | 700 Weight | Section Headings
-- **H3**: `20px` | 700 Weight | Component Headings
-- **Body**: `16px` | 400 Weight | Standard Text
-- **Labels**: `14px` | 500 Weight | Captions/Tags
-- **Badges**: `12px` | 600 Weight | Mini Tags
-
-```mermaid
-graph LR
-    A[Brand: PAWZZ] --> B[Headings: 700 Jakarta]
-    B --> C[Body: 400 Jakarta]
-    C --> D[Micro: 600 Jakarta Caps]
-```
-
----
-
-## 🧱 Visual Language
-### Surfaces & Shapes
-- **Global BG**: `#FFF9F4` (White Cloud) - *Never Neutral Gray*.
-- **Cards**: `#FFFFFF`, `rounded-2xl`, `shadow-sm`, `border-[#E5E7EB]`.
-- **Interactions**: On hover, cards transition with `translateY(-2px)` and `shadow-xl`.
-- **Aesthetics**: Large organic blobs in teal (`#0A9396`) at 10% opacity; subtle paw print watermarks at 6% opacity.
-
-### Border Radius System
-- **Buttons**: `rounded-xl`
-- **Cards**: `rounded-2xl`
-- **Inputs**: `rounded-lg`
-- **Badges**: `rounded-full`
-
----
-
-## 🧭 Main Navigation
-### Desktop Navbar
-- **Height**: `16` (64px) | `fixed top-0` | `backdrop-blur-md`
-- **Left**: `PAWZZ` wordmark + Teal Paw Icon.
-- **Center**: Directory · Volunteer · Booking (Hover: `#0A9396`).
-- **Active State**: `#005F73` Text + `#EE9B00` Bottom Border (2px).
-- **Right**: "Login with Google" (Teal Outline) or User Avatar (2px Teal Border).
-
-### Mobile Navigation
-- **Trigger**: Hamburger Icon.
-- **Drawer**: Slide-in from right, `bg-[#005F73]`, text-white.
-
----
-
-## 🔘 Button Components
-| Variant | Style | Interaction |
-| :--- | :--- | :--- |
-| **Primary** | `bg-[#0A9396]` | Hover: `#005F73`, Scale-95 |
-| **Secondary** | `border-2 border-[#0A9396]` | Hover: Teal Tint BG |
-| **Accent (CTA)** | `bg-[#EE9B00]` | Hover: Darker Amber, Shadow-lg |
-| **Danger** | `bg-red-500` | Hover: `bg-red-600` |
-| **Disabled** | `opacity-50` | `pointer-events-none` |
-
----
-
-## 📅 Functional UI Modules
-
-### 1. Directory Listing
-- **Grid**: Responsive 1 col (mobile) to 3 cols (desktop).
-- **Listing Card**: White surface, 2xl radius.
-- **Data Protection**: Unauthenticated users see `blur-sm grayscale` with a "Login to view" overlay chip.
-
-### 2. Booking System
-- **Calendar**: `rounded-2xl` bg-white.
-- **Time Slots**: Grid of 3.
-  - *Available*: Teal border, hover teal tint.
-  - *Selected*: Teal background, white text.
-  - *Booked*: Gray background, line-through.
-
-### 3. Auth Modal
-- **Overlay**: `bg-black/40` + `backdrop-blur-sm`.
-- **Card**: Max-width `md`, centered PAWZZ logo.
-- **Role Selector**: Custom styled radio groups with icons for NGO, Clinic, and Volunteer roles.
-
----
-
-## ✨ Micro-interactions & Animations
-- **Spring Effects**: All button presses use `scale(0.97)` for tactile feedback.
-- **Modal Entrance**: `opacity-0` to `opacity-1` + `translateY(12px)` to `0`.
-- **Loading States**: Replicate card shapes using `bg-[#EEF9F9]` animate-pulse blocks (Skeletons).
-- **Toasts**: Slide-in from bottom-right, auto-dismiss in 4 seconds.
-- **Conflict Handling**: Time grid shakes and flashes red on double-booking detection.
-
----
-
-## 🚨 Error & Empty States
-- **Empty Directory**: Centered illustration of a sad paw + "No listings found".
-- **Forbidden**: Never a raw 403; always triggers the Auth Modal overlay.
+## 11. FRONTEND IMPLEMENTATION RULES
+* Use Next.js App Router.
+* Server components where beneficial; client components for interactivity.
+* Consistent loading/error states.
+* Reusable form inputs and modals.
+* Accessible semantic HTML.
+* Centralized auth state.
+* Sync relevant state with URL.
+* Responsive sections.
+* Immediate visual feedback for actions.

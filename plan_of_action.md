@@ -1,74 +1,65 @@
-# 🚀 PAWZZ | Final Plan of Action (Developer Blueprint)
+# 🚀 PAWZZ — HYPER-DETAILED END-TO-END DEVELOPER BLUEPRINT
 
-## 🎯 Project Objective
-Build a production-grade pet care ecosystem connecting Clinics, NGOs, and Volunteers with atomic integrity, AI-driven workflows, and a premium "White Cloud" aesthetic.
+## 0. NON-NEGOTIABLE EXECUTION RULES
+Before writing any code, understand the entire product flow end to end. The final system must not feel like isolated pages stitched together. It should feel like one coherent product with consistent design language, strict access control, predictable state transitions, and clear separation of responsibilities between frontend, backend, database, and background workers.
 
----
+* Generate code that is directly usable.
+* Keep all features aligned with the stated requirements.
+* Use the specified stack only unless a supporting utility is necessary.
+* Do not invent product features outside the brief.
+* Do not remove or weaken any listed functionality.
+* Prefer maintainable patterns over clever shortcuts.
+* Make sure the system is secure by default.
+* Ensure that data flow is explicit and traceable.
+* Ensure that user experience remains simple even if the backend logic is complex.
+* Structure the code so each feature can be tested independently.
+* Add comments where architectural decisions need explanation.
+* Separate concerns cleanly across app routes, reusable components, services, middleware, utilities, and models.
+* Every async flow must have loading, success, and error states.
+* Every sensitive action must have authorization checks.
+* Every critical database write must be atomic or safely handled with conflict logic.
+* Every user-facing form must validate input before submission and again on the server.
 
-## 🛠️ Phase 1: Environment & Design System (Days 1-2)
-- **Goal**: Establish the theme and component library.
-- [ ] Initialize **Next.js 14** (Frontend) & **Express** (Backend) monorepo.
-- [ ] **Tailwind Configuration**: 
-  - Colors: `teal-700` (#0F766E), `amber-500` (#F59E0B), `gray-50` (#F9FAFB).
-  - Fonts: **Inter** (Primary), **Plus Jakarta Sans** (Refined Headings).
-- [ ] **Atomic UI Development**:
-  - `Button`: Primary, Secondary, Danger, Loading (SVG Spin).
-  - `Inputs`: Custom styles for focus/error states.
-  - `Surface`: 2xl rounded cards with standard `--shadow-sm`.
-- [ ] **Global Navbar**: Responsive sticky header with avatar dropdowns and "Login with Google".
+## 10. PROJECT STRUCTURE AND CODE ORGANIZATION
+The codebase must be organized to make navigation obvious.
 
----
+**Frontend**
+* /app
+* /components
+* /components/ui
+* /components/layout
+* /components/forms
+* /components/modals
+* /context
+* /hooks
+* /lib
+* /services
+* /styles
+* /types
 
-## 🔐 Phase 2: Secure Core & Auth (Days 3-4)
-- **Goal**: Implement OAuth 2.0 with RBAC.
-- [ ] **Google OAuth**: Integrate `google-auth-library` and NextAuth or custom JWT.
-- [ ] **JWT in HttpOnly Cookies**: Strict cookie-based session management (SameSite=Strict).
-- [ ] **RBAC Middleware**: `requireRole(['Admin', 'Vet Clinic', ...])` implementation.
-- [ ] **Audit Trail**: Basic logging for all sensitive auth actions.
+**Backend**
+* /controllers
+* /routes
+* /models
+* /middlewares
+* /workers
+* /utils
+* /config
+* /services
+* /validators
 
----
+## 13. REQUIRED OUTPUT FORMAT
+When generating the project, output in this order:
+1. Brief architecture overview.
+2. Complete directory structure.
+3. Tailwind configuration.
+4. Shared types and utilities.
+5. Frontend pages and components.
+6. Backend routes, controllers, middleware, models, and services.
+7. Worker thread implementation.
+8. Environment variables example.
+9. Deployment notes.
+10. Any critical assumptions or limitations.
 
-## 📂 Phase 3: Directory System & SEO (Days 5-6)
-- **Goal**: High-performance searchable listings.
-- [ ] **Next.js SSR**: Pre-render listings for SEO.
-- [ ] **Search Console**: Global search with Location (GeoJSON) and Category filters.
-- [ ] **Data Masking Layer**: Logic to blur contact details for unauthenticated users.
-- [ ] **Listing Grid**: Fully responsive layout from mobile to 4K displays.
-
----
-
-## 📅 Phase 4: Atomic Booking & Payments (Days 7-9)
-- **Goal**: Prevent double-booking and handle transactions.
-- [ ] **Availability Engine**: Generate slots and handle `FIND_AND_UPDATE` atomic locks.
-- [ ] **Booking Flow**: 3-step modal (Calendar -> Slots -> Confirm).
-- [ ] **Razorpay Integration**: Frontend Checkout + Backend Secure Webhook verification.
-- [ ] **Race Condition Testing**: Simulated load testing for slot selection.
-
----
-
-## 🎙️ Phase 5: Voice Volunteer Pipeline (Days 10-12)
-- **Goal**: Seamless audio application workflow.
-- [ ] **MediaRecorder UI**: Recording/Stop/Timer system with pulse animations.
-- [ ] **GridFS Storage**: Stream binary audio data directly into MongoDB.
-- [ ] **AI Worker Threads**: Instantiate Node.js `worker_threads` for Whisper API speech-to-text.
-- [ ] **Review Interface**: Markdown-enriched transcriptions for Admin review.
-
----
-
-## 🛡️ Phase 6: Admin Moderation & Polish (Days 13-14)
-- **Goal**: Moderation dashboard and UX refinement.
-- [ ] **Admin Sidebar**: Central hub for Volunteers, Listings, and Booking management.
-- [ ] **Moderation Workflow**: Approve/Reject queue for newly registered clinics/NGOs.
-- [ ] **Global Loading/Error Handling**:
-  - Skeleton loaders for all cards.
-  - Success/Conflict toast notifications.
-  - Responsive "Sad Paw" empty states.
-- [ ] **Deployment**: Vercel (Frontend) + Render/Heroku (Backend) + MongoDB Atlas.
-
----
-
-## 📝 Critical Constraints Reminder
-- **No Local Storage**: JWTs must remain in cookies.
-- **No Main Thread Blocking**: AI processing stays in worker threads.
-- **Atomic Writes**: Booking slots must never overlap.
-- **SEO Priority**: Directory pages must remain server-side rendered.
+## 14. FINAL SYSTEM OBJECTIVE
+The final system should feel like a real veterinary service platform that can be launched, tested, and extended. It should allow users to discover providers, book slots, submit volunteer applications, and let admins moderate content securely. Every feature must feel internally consistent. Every state transition must be deliberate. Every sensitive action must be guarded. Every database write must be defensible. Every public-facing page must be understandable without login, while protected details remain locked until authorization is granted.
