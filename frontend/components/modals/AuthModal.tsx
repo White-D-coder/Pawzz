@@ -45,7 +45,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-brand-dark/40 backdrop-blur-sm"
+            className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm"
           />
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -53,11 +53,11 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             className="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full relative z-10 overflow-hidden"
           >
-            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-brand-primary to-brand-sky" />
+            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-teal-700 to-teal-800" />
             
             <button 
               onClick={onClose}
-              className="absolute top-6 right-6 text-gray-400 hover:text-brand-dark transition-colors"
+              className="absolute top-6 right-6 text-gray-400 hover:text-gray-900 transition-colors"
             >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -65,8 +65,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             </button>
             
             <div className="text-center mb-8">
-              <span className="inline-block px-3 py-1 bg-brand-bg text-brand-primary text-xs font-bold rounded-full mb-4">JOIN THE TRIBE</span>
-              <h2 className="text-3xl font-extrabold text-brand-dark mb-2">Welcome to PAWZZ</h2>
+              <span className="inline-block px-3 py-1 bg-teal-50 text-teal-700 text-xs font-bold rounded-full mb-4">JOIN THE TRIBE</span>
+              <h2 className="text-3xl font-extrabold text-gray-900 mb-2">Welcome to PAWZZ</h2>
               <p className="text-gray-500">Select your role to continue</p>
             </div>
 
@@ -80,8 +80,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                   }}
                   className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all cursor-pointer group ${
                     selectedRole === role.id 
-                      ? 'border-brand-primary bg-brand-bg/50 shadow-md translate-x-1' 
-                      : 'border-gray-100 hover:border-brand-primary/30 hover:bg-gray-50'
+                      ? 'border-teal-700 bg-teal-50 shadow-md translate-x-1' 
+                      : 'border-gray-100 hover:border-teal-700/30 hover:bg-gray-50'
                   }`}
                 >
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl transition-transform group-hover:scale-110 ${
@@ -90,11 +90,11 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                     {role.icon}
                   </div>
                   <div className="flex-1">
-                    <div className="font-bold text-brand-dark">{role.name}</div>
+                    <div className="font-bold text-gray-900">{role.name}</div>
                     <div className="text-xs text-gray-500">{role.description}</div>
                   </div>
                   {selectedRole === role.id && (
-                    <div className="w-5 h-5 bg-brand-primary rounded-full flex items-center justify-center">
+                    <div className="w-5 h-5 bg-teal-700 rounded-full flex items-center justify-center">
                       <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                       </svg>

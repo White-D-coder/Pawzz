@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import Navbar from "@/components/layout/Navbar";
@@ -7,9 +7,9 @@ import Footer from "@/components/layout/Footer";
 
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
-const jakarta = Plus_Jakarta_Sans({ 
+const inter = Inter({ 
   subsets: ["latin"],
-  variable: "--font-plus-jakarta",
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
@@ -26,7 +26,7 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body className={`${jakarta.variable} font-sans bg-brand-bg antialiased`}>
+      <body className={`${inter.variable} font-sans bg-gray-50 text-gray-900 antialiased`}>
         <GoogleOAuthProvider clientId={clientId}>
           <AuthProvider>
             <Navbar />
@@ -40,4 +40,3 @@ export default function RootLayout({
     </html>
   );
 }
-

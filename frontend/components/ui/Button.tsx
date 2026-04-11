@@ -2,13 +2,12 @@ import React from 'react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
-// Helper for tailwind class merging
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'accent' | 'danger' | 'outline';
+  variant?: 'primary' | 'secondary' | 'danger';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
 }
@@ -16,16 +15,14 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', isLoading, children, ...props }, ref) => {
     const variants = {
-      primary: 'bg-brand-primary text-white hover:bg-brand-sky shadow-soft',
-      secondary: 'bg-transparent border border-brand-primary text-brand-primary hover:bg-brand-primary/5',
-      accent: 'bg-brand-accent text-white hover:bg-brand-accent/90',
-      danger: 'bg-semantic-error text-white hover:bg-semantic-error/90',
-      outline: 'border border-text-body text-text-body hover:bg-gray-50',
+      primary: 'bg-teal-700 text-white shadow-md hover:bg-teal-800 hover:shadow-lg',
+      secondary: 'bg-transparent text-teal-700 border-2 border-teal-700 hover:bg-teal-50',
+      danger: 'bg-red-500 text-white hover:bg-red-600 shadow-sm',
     };
 
     const sizes = {
       sm: 'px-3 py-1.5 text-xs',
-      md: 'px-5 py-2.5 text-sm',
+      md: 'px-4 py-2 text-sm',
       lg: 'px-8 py-3.5 text-base',
     };
 
@@ -33,7 +30,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={cn(
-          'inline-flex items-center justify-center rounded-xl font-bold transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none',
+          'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none',
           variants[variant],
           sizes[size],
           className
