@@ -29,25 +29,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // Check for existing session on mount
-    const checkAuth = async () => {
-      try {
-        const response = await axios.get('/api/auth/me'); // We'll implement this route
-        setUser(response.data.user);
-      } catch (error) {
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-    checkAuth();
-  }, []);
+  interface LoginPayload {
+    token: string;
+    role?: string;
+  }
 
-  const login = async (googleToken: string) => {
+  const login = async (googleToken: string, role?: string) => {
     try {
-      const response = await axios.post('/api/auth/login', { token: googleToken });
-      setUser(response.data.user);
+      const response = await axios.post('/api/auth/login', { token: googleToken, role });
+      // Backend returns { success: true, data: { user: {...} }, message: "..." }
+      setUser(response.data.data.user);
     } catch (error) {
       console.error('Login failed:', error);
       throw error;
@@ -62,6 +53,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.error('Logout failed:', error);
     }
   };
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await axios.get('/api/auth/me');
+        setUser(response.data.data.user);
+      } catch (error) {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkAuth();
+  }, []);
+
 
   return (
     <AuthContext.Provider value={{ user, loading, login, logout }}>

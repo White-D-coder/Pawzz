@@ -17,13 +17,16 @@ const bookingSchema = new mongoose.Schema({
   },
   status: { 
     type: String, 
-    enum: ['pending', 'confirmed', 'cancelled'], 
-    default: 'pending' 
+    enum: ['available', 'pending', 'confirmed', 'cancelled'], 
+    default: 'available' 
   },
-  payment_ref: String
+  paymentRef: { 
+    type: String, 
+    default: null 
+  }
 }, { timestamps: true });
 
-// Compound index for atomic concurrency checks
-bookingSchema.index({ providerId: 1, time_slot: 1 }, { unique: true });
+// CRITICAL: Compound index for atomic concurrency as per technical-architect.md
+bookingSchema.index({ providerId: 1, time_slot: 1, status: 1 });
 
 export const Booking = mongoose.model('Booking', bookingSchema);
