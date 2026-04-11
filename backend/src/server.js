@@ -4,21 +4,25 @@ import app from './app.js';
 
 dotenv.config();
 
-const PORT = process.env.PORT || 5001;
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/pawzz';
+const PORT = 5001; // Forced to 5001 to avoid macOS port 5000 conflict
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/pawzz';
 
-const startServer = async () => {
+// Start server immediately to resolve 404s
+app.listen(PORT, () => {
+  console.log(`🚀 PAWZZ Backend LIVE on port ${PORT}`);
+  console.log(`🔗 Local link: http://localhost:${PORT}`);
+});
+
+// Attempt DB connection in background
+const connectDB = async () => {
   try {
     await mongoose.connect(MONGODB_URI);
-    console.log('✅ Connected to MongoDB Atlas');
-    
-    app.listen(PORT, () => {
-      console.log(`🚀 PAWZZ Backend running on port ${PORT}`);
-    });
+    console.log('✅ Connected to MongoDB');
   } catch (error) {
-    console.error('❌ Database connection failed:', error);
-    process.exit(1);
+    console.error('⚠️ Database connection deferred:', error.message);
+    console.log('ℹ️ Running in offline mode. Some features may be limited.');
   }
 };
 
-startServer();
+connectDB();
+

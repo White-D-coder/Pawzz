@@ -20,6 +20,9 @@ interface AuthContextType {
   logout: () => Promise<void>;
 }
 
+axios.defaults.baseURL = 'http://localhost:3000/api';
+axios.defaults.withCredentials = true;
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
