@@ -1,15 +1,21 @@
+import { createServer } from 'http';
 import app from './app.js';
 import { connectDB } from './config/db.js';
 import { env } from './config/env.js';
+import { initSocket } from './utils/socket.js';
 
 const startServer = async () => {
-  // Connect to Database in background - don't block the server startup
+  // Connect to Database
   connectDB();
 
-  // Start Express App
   const PORT = env.PORT || 5001;
-  app.listen(PORT, () => {
-    console.log(`🚀 PAWZZ Backend LIVE on port ${PORT}`);
+  const httpServer = createServer(app);
+
+  // Initialize Socket.io
+  initSocket(httpServer);
+
+  httpServer.listen(PORT, () => {
+    console.log(`🚀 PAWZZ Real-time Engine LIVE on port ${PORT}`);
     console.log(`🔗 Health Check: http://localhost:${PORT}/health`);
   });
 };

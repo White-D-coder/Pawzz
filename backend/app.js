@@ -15,6 +15,12 @@ import adminRoutes from './routes/admin.js';
 import paymentRoutes from './routes/payment.js';
 import webhookRoutes from './routes/webhook.js';
 import volunteerRoutes from './routes/volunteer.js';
+import mapRouter from './routes/mapRouter.js';
+import clinicRoutes from './routes/clinic.js';
+import ngoRoutes from './routes/ngo.js';
+import sosRoutes from './routes/sos.js';
+import missionRoutes from './routes/mission.js';
+import chatRoutes from './routes/chat.js';
 
 const app = express();
 
@@ -55,11 +61,25 @@ app.use(cookieParser()); // Cookie Parser for HttpOnly tokens
  * Route Mounting
  */
 app.use('/api/auth', authRoutes);
+
+// High Priority Professional Routes
+app.use('/api/clinic', (req, res, next) => {
+  console.log(`🏥 Clinic API Hit: ${req.method} ${req.url}`);
+  next();
+}, clinicRoutes);
+
+app.use('/api/ngo', ngoRoutes);
+app.use('/api/sos', sosRoutes);
+app.use('/api/missions', missionRoutes);
+app.use('/api/chat', chatRoutes);
+
+// Generic Routes
 app.use('/api/listings', listingRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/volunteers', volunteerRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/payment', paymentRoutes);
+app.use('/api/map', mapRouter);
 
 
 
