@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import AuthModal from '@/components/modals/AuthModal';
 
 interface User {
   id: string;
@@ -16,7 +17,10 @@ interface User {
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (googleToken: string) => Promise<void>;
+  isAuthOpen: boolean;
+  openAuthModal: () => void;
+  closeAuthModal: () => void;
+  login: (googleToken: string, role?: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -28,6 +32,10 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+
+  const openAuthModal = () => setIsAuthOpen(true);
+  const closeAuthModal = () => setIsAuthOpen(false);
 
   interface LoginPayload {
     token: string;
@@ -37,8 +45,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const login = async (googleToken: string, role?: string) => {
     try {
       const response = await axios.post('/api/auth/login', { token: googleToken, role });
-      // Backend returns { success: true, data: { user: {...} }, message: "..." }
-      setUser(response.data.data.user);
+      const userData = response.data.data.user;
+      setUser(userData);
+      return userData; // Returning user data for redirection logic
     } catch (error) {
       console.error('Login failed:', error);
       throw error;
@@ -71,8 +80,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, isAuthOpen, openAuthModal, closeAuthModal, login, logout }}>
       {children}
+      <AuthModal isOpen={isAuthOpen} onClose={closeAuthModal} />
     </AuthContext.Provider>
   );
 };

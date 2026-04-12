@@ -1,54 +1,92 @@
 import mongoose from 'mongoose';
 import { User } from '../models/User.js';
+import { AdminWhitelist } from '../models/AdminWhitelist.js';
 import { verifyGoogleToken } from '../services/authService.js';
 import { signToken } from '../utils/jwtUtils.js';
 import { sendSuccess, sendError } from '../utils/responseHelper.js';
 
-/**
- * Handle Google Login / Registration
- */
 export const googleLogin = async (req, res) => {
   try {
     const { token, role } = req.body;
     
-    if (!token) {
-      return sendError(res, 'MISSING_TOKEN', 'Google token is required', 400);
+    // 1. Handle Mock Bypass for Development
+    if (token === 'mock_token_bypass' && process.env.NODE_ENV === 'development') {
+      const mockEmail = `test_${(role || 'parent').replace(/\s+/g, '').toLowerCase()}@example.com`;
+      
+      // Check if whitelisted in DB
+      const isWhitelisted = await AdminWhitelist.findOne({ email: mockEmail.toLowerCase() });
+      const isAdminByEmail = isWhitelisted || mockEmail === 'deeptanu.bhunia@adypu.edu.in';
+      
+      const mockUser = { 
+        email: mockEmail, 
+        role: isAdminByEmail ? 'Admin' : role,
+        isApproved: (role === 'Pet Parent' || isAdminByEmail),
+        requestedRole: (role !== 'Pet Parent' && !isAdminByEmail) ? role : null,
+        profile: { name: `Test ${role || 'User'}`, avatar: 'https://i.pravatar.cc/150' } 
+      };
+
+      // Upsert mock user in DB for approval testing
+      let user = await User.findOneAndUpdate(
+        { email: mockEmail },
+        mockUser,
+        { upsert: true, new: true }
+      );
+
+      const jwtToken = signToken({ id: user._id, email: user.email, role: user.role });
+      res.cookie('pawzz_token', jwtToken, { httpOnly: true, secure: false, sameSite: 'strict', maxAge: 7 * 24 * 60 * 60 * 1000 });
+
+      return sendSuccess(res, { user }, 'Authentication successful (BYPASS MODE)');
     }
 
-    // 1. Verify Google Token
+    // 2. Verify Google Token
     const payload = await verifyGoogleToken(token);
     const { email, name, picture } = payload;
 
-    // 2. RESILIENCE: Handle Offline Database for local development
-    if (mongoose.connection.readyState !== 1 && process.env.NODE_ENV === 'development') {
-      console.warn('🚧 DB DISCONNECTED: Simulating user for development');
-      const mockUser = { id: 'mock_id', email, role: role || 'Volunteer / City Lead', profile: { name, avatar: picture } };
-      const jwtToken = signToken(mockUser);
-      
-      res.cookie('pawzz_token', jwtToken, {
-        httpOnly: true,
-        secure: false,
-        sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 60 * 1000
-      });
-
-      return sendSuccess(res, { user: mockUser }, 'Authentication successful (MOCK MODE)');
-    }
-
     // 3. Upsert User (Update existing or create new with role)
-
     let user = await User.findOne({ email });
     
+    // Check if whitelisted in DB (Enforce Admin role for these emails)
+    const isWhitelisted = await AdminWhitelist.findOne({ email: email.toLowerCase() });
+    const isAdminWhitelisted = isWhitelisted || email === 'deeptanu.bhunia@adypu.edu.in';
+
     if (!user) {
-      // New User - require role selection
       if (!role) {
         return sendError(res, 'ROLE_REQUIRED', 'Role selection is required for new accounts', 400);
       }
+
+      let finalRole = 'Pet Parent';
+      let approved = false;
+
+      if (role === 'Admin') {
+        if (isAdminWhitelisted) {
+          finalRole = 'Admin';
+          approved = true;
+        } else {
+          return sendError(res, 'FORBIDDEN', 'You are not authorized to be an Admin', 403);
+        }
+      } else if (role !== 'Pet Parent') {
+        finalRole = role; // Keep the requested role
+        approved = false; // But mark as unapproved
+      } else {
+        finalRole = 'Pet Parent';
+        approved = true;
+      }
+
       user = await User.create({
         email,
-        role,
+        role: finalRole,
+        isApproved: approved,
+        requestedRole: (finalRole !== role) ? role : null,
         profile: { name, avatar: picture }
       });
+    } else {
+      // Existing User: If they are whitelisted as admin but role is not Admin, promote them automatically
+      if (isAdminWhitelisted && user.role !== 'Admin') {
+        user.role = 'Admin';
+        user.isApproved = true;
+        await user.save();
+        console.log(`⭐ Existing user ${email} promoted to Admin via whitelist.`);
+      }
     }
 
     // 3. Generate JWT
