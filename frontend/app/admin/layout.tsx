@@ -17,7 +17,16 @@ export default function AdminLayout({
         </div>
         
         <nav className="flex-1 space-y-2">
-          <Link href="/admin/volunteers" className="block px-4 py-3 bg-gray-800 rounded-lg text-sm font-medium hover:bg-gray-700 transition-colors">
+          <Link href="/admin/analytics" className="block px-4 py-3 bg-transparent rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition-colors">
+            Analytics & Stats
+          </Link>
+          <Link href="/admin/users" className="block px-4 py-3 bg-transparent rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition-colors">
+            Manage Users
+          </Link>
+          <Link href="/admin/bookings" className="block px-4 py-3 bg-transparent rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition-colors">
+            Bookings & Slots
+          </Link>
+          <Link href="/admin/volunteers" className="block px-4 py-3 bg-transparent rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition-colors">
             Volunteer Reviews
           </Link>
           <Link href="/admin/approve" className="block px-4 py-3 bg-transparent rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800 transition-colors">

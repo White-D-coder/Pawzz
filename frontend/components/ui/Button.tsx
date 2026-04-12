@@ -15,23 +15,24 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', isLoading, children, ...props }, ref) => {
     const variants = {
-      primary: 'bg-teal-700 text-white shadow-md hover:bg-teal-800 hover:shadow-lg',
-      secondary: 'bg-transparent text-teal-700 border-2 border-teal-700 hover:bg-teal-50',
+      primary: 'bg-teal-700 text-white shadow-cloud hover:bg-teal-800 hover:-translate-y-0.5',
+      secondary: 'bg-amber-500 text-white shadow-cloud hover:bg-amber-600 hover:-translate-y-0.5',
+      outline: 'bg-transparent text-teal-700 border-2 border-teal-700 hover:bg-teal-50',
       danger: 'bg-red-500 text-white hover:bg-red-600 shadow-sm',
     };
 
     const sizes = {
-      sm: 'px-3 py-1.5 text-xs',
-      md: 'px-4 py-2 text-sm',
-      lg: 'px-8 py-3.5 text-base',
+      sm: 'px-4 py-1.5 text-sm',
+      md: 'px-6 py-2.5 text-base',
+      lg: 'px-10 py-4 text-lg',
     };
 
     return (
       <button
         ref={ref}
         className={cn(
-          'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none',
-          variants[variant],
+          'inline-flex items-center justify-center font-bold rounded-full transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none',
+          variants[variant as keyof typeof variants] || variants.primary,
           sizes[size],
           className
         )}

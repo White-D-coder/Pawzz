@@ -1,5 +1,5 @@
 import express from 'express';
-import { getListings, createListing, verifyListing } from '../controllers/listingController.js';
+import { getListings, createListing, verifyListing, seedListings } from '../controllers/listingController.js';
 import { protect, requireRole } from '../middlewares/authMiddleware.js';
 import { validate, listingSchema } from '../validators/schemas.js';
 
@@ -9,6 +9,7 @@ const router = express.Router();
  * Public Routes - Search
  */
 router.get('/', getListings);
+router.get('/seed-listings', seedListings); // TEMPORARY SEED ROUTE
 
 /**
  * Protected Routes - Clinic/NGO

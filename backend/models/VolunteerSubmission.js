@@ -10,8 +10,14 @@ const volunteerSubmissionSchema = new mongoose.Schema({
   formData: {
     fullName: String,
     email: String,
-    areaOfInterest: String
+    areaOfInterest: String,
+    city: String
   },
+  location: {
+    type: { type: String, default: 'Point' },
+    coordinates: [Number] // [longitude, latitude]
+  },
+  isCityLead: { type: Boolean, default: false },
   audioFileId: { 
     type: mongoose.Schema.Types.ObjectId, 
     required: true 

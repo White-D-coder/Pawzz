@@ -1,64 +1,150 @@
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center bg-gray-50 overflow-hidden relative">
-      {/* Background Decorations */}
-      <div className="absolute top-0 left-0 w-full h-[600px] opacity-10 pointer-events-none">
-        <svg viewBox="0 0 1440 320" className="w-full h-full">
-          <path fill="#0F766E" fillOpacity="1" d="M0,128L48,122.7C96,117,192,107,288,122.7C384,139,480,181,576,181.3C672,181,768,139,864,133.3C960,128,1056,160,1152,165.3C1248,171,1344,149,1392,138.7L1440,128L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path>
-        </svg>
-      </div>
+    <main className="flex min-h-screen flex-col items-center overflow-hidden relative">
+      {/* Soft Background Gradient */}
+      <div className="absolute top-0 left-0 w-full h-[800px] bg-gradient-to-b from-amber-50/50 to-transparent -z-10 pointer-events-none" />
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-4 md:px-8 w-full max-w-7xl mx-auto flex flex-col items-center text-center">
-        <div className="mb-6 inline-flex items-center gap-2 bg-teal-700/10 text-teal-700 px-4 py-1.5 rounded-full text-xs font-bold tracking-wide uppercase">
-          <span>🐾</span> Connecting Pet Care, Together.
-        </div>
-        
-        <h1 className="text-5xl md:text-7xl font-extrabold text-teal-800 max-w-4xl tracking-tight leading-[1.1] mb-6">
-          Find Trusted <span className="text-teal-700">Pet Care</span> Near You
-        </h1>
-        
-        <p className="text-lg md:text-xl text-gray-600 max-w-2xl leading-relaxed mb-10">
-          The unified platform connecting veterinary clinics, NGOs, and volunteers to provide the best care for every pet.
-        </p>
-
-        <div className="flex flex-col sm:flex-row gap-4 mb-16">
-          <Link href="/directory">
-            <Button size="lg" className="text-lg w-full sm:w-auto">
-              Explore Directory
-            </Button>
-          </Link>
-          <Link href="/volunteer">
-            <Button variant="secondary" size="lg" className="text-lg bg-white/50 backdrop-blur-sm w-full sm:w-auto">
-              Volunteer With Us
-            </Button>
-          </Link>
-        </div>
-
-        {/* Search Console Placeholder */}
-        <div className="w-full max-w-3xl bg-white rounded-2xl shadow-sm border border-gray-100 p-3 flex flex-col md:flex-row gap-2">
-          <div className="flex-1 flex items-center px-4 gap-3 border-b md:border-b-0 md:border-r border-gray-100 py-2">
-            <span className="text-lg opacity-40">📍</span>
-            <input type="text" placeholder="Location" className="w-full bg-transparent outline-none text-gray-600 font-medium" />
+      <section className="relative pt-24 pb-32 px-4 md:px-8 w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div className="flex flex-col items-start text-left">
+          <div className="mb-6 inline-flex items-center gap-2 bg-amber-100 text-amber-800 px-5 py-2 rounded-full text-sm font-bold tracking-wide uppercase shadow-sm">
+            <span>🦴</span> Caring for your family
           </div>
-          <div className="flex-1 flex items-center px-4 gap-3 py-2">
-            <span className="text-lg opacity-40">🔍</span>
-            <input type="text" placeholder="Clinic, NGO, or Service..." className="w-full bg-transparent outline-none text-gray-600 font-medium" />
+
+          <h1 className="text-5xl md:text-7xl font-extrabold text-teal-900 leading-[1.05] mb-8 tracking-tight">
+            Every <span className="text-amber-500">Paw</span> Deserves a <span className="text-teal-700 underline decoration-amber-200 underline-offset-8">Helping Hand</span>
+          </h1>
+
+          <p className="text-lg md:text-xl text-gray-600 max-w-xl leading-relaxed mb-10 font-medium">
+            PAWZZ is a dedicated community connecting you with trusted vets, supportive NGOs, and passionate volunteers. Because they’re not just pets—they’re family.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-5 mb-12 w-full">
+            <Link href="/directory">
+              <Button size="lg" className="text-lg px-10 h-16 w-full sm:w-auto">
+                Find Care Now
+              </Button>
+            </Link>
+            <Link href="/volunteer">
+              <Button variant="secondary" size="lg" className="text-lg px-10 h-16 w-full sm:w-auto">
+                Be a Hero
+              </Button>
+            </Link>
           </div>
-          <Link href="/directory" className="flex">
-            <Button variant="primary" className="rounded-xl px-8 w-full md:w-auto h-full">
-              Search
-            </Button>
-          </Link>
+
+          {/* Search Console - Integrated */}
+          <div className="w-full bg-white rounded-[2.5rem] shadow-cloud border border-amber-50 p-4 flex flex-col md:flex-row gap-3">
+            <div className="flex-1 flex items-center px-6 gap-3 border-b md:border-b-0 md:border-r border-gray-50 py-3">
+              <span className="text-xl">📍</span>
+              <input type="text" placeholder="Where are you?" className="w-full bg-transparent outline-none text-gray-700 font-semibold placeholder:text-gray-400" />
+            </div>
+            <div className="flex-1 flex items-center px-6 gap-3 py-3">
+              <span className="text-xl">🐾</span>
+              <input type="text" placeholder="What does your pet need?" className="w-full bg-transparent outline-none text-gray-700 font-semibold placeholder:text-gray-400" />
+            </div>
+            <Link href="/directory" className="flex">
+              <Button className="rounded-[2rem] px-10 h-14 md:h-auto w-full">
+                Search
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        {/* Hero Visual Area */}
+        <div className="relative h-[500px] md:h-[600px] w-full flex items-center justify-center">
+          {/* Main Blob Image Container */}
+          <div
+            className="absolute inset-0 overflow-hidden shadow-cloud bg-[#5CACEE] border-8 border-white"
+            style={{ borderRadius: '60% 40% 30% 70% / 60% 30% 70% 40%' }}
+          >
+            <Image
+              src="/image/thumb.jpeg"
+              alt="Caring for pets"
+              fill
+              className="object-cover object-bottom"
+              priority
+            />
+            {/* Overlay a soft gradient to match the vibe if needed */}
+            <div className="absolute inset-0 bg-transparent mix-blend-overlay" />
+          </div>
+
+          {/* Floating Movie Speech Bubble */}
+          <div className="absolute top-[10%] -left-8 md:-left-12 z-10 animate-bounce duration-[4000ms]">
+            <div
+              className="relative bg-[#D5EBE6] p-8 pb-10 shadow-lg flex flex-col items-center justify-center text-center max-w-[200px]"
+              style={{ borderRadius: '60% 40% 50% 50% / 50% 50% 40% 60%' }}
+            >
+              <span className="text-teal-950 font-black text-sm leading-snug tracking-tight mb-2">
+                Play the movie<br />and see how<br />we work!
+              </span>
+
+              {/* Play Button intersecting the bubble */}
+              <button className="absolute -bottom-6 w-14 h-14 bg-black rounded-full flex items-center justify-center shadow-2xl hover:scale-105 transition-transform group border-4 border-white">
+                <div className="w-0 h-0 border-t-[8px] border-t-transparent border-l-[12px] border-l-[#5CACEE] border-b-[8px] border-b-transparent ml-1 group-hover:border-l-[#8AB4F8] transition-colors" />
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Paw watermarks */}
-      <div className="fixed bottom-10 right-10 text-9xl opacity-[0.03] pointer-events-none select-none">🐾</div>
-      <div className="fixed top-40 left-10 text-8xl opacity-[0.02] pointer-events-none select-none -rotate-12">🐾</div>
+      {/* Feature Section: Compassionate Vets */}
+      <section className="py-24 px-4 w-full bg-white">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
+          <div className="relative h-[500px] order-2 md:order-1">
+            <div className="absolute inset-0 bg-teal-100/30 rounded-[3rem] -rotate-3 -z-10" />
+            <div className="absolute inset-0 overflow-hidden rounded-[3rem] shadow-cloud">
+              <Image
+                src="/image/1.jpeg"
+                alt="Compassionate Vet"
+                fill
+                className="object-contain"
+              />
+            </div>
+          </div>
+          <div className="order-1 md:order-2">
+            <h2 className="text-4xl md:text-5xl font-extrabold text-teal-950 mb-6 leading-tight">Expert Care with a <span className="text-amber-500">Gentle Touch</span></h2>
+            <p className="text-lg text-gray-600 mb-8 leading-relaxed">
+              Every vet in our directory is fully verified and committed to providing the same level of care they would for their own pets. Book instantly and find the comfort your pet needs.
+            </p>
+            <Link href="/directory?type=clinic">
+              <Button className="h-16 px-10 text-lg">Explore Clinics</Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Feature Section: Rescue Bond */}
+      <section className="py-24 px-4 w-full">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
+          <div>
+            <h2 className="text-4xl md:text-5xl font-extrabold text-teal-950 mb-6 leading-tight">Join the <span className="text-teal-700 text-6xl block">Circle of Hope</span></h2>
+            <p className="text-lg text-gray-600 mb-8 leading-relaxed">
+              Become a volunteer and make a real difference in a rescue animal's life. We need your heart, your time, and your voice.
+            </p>
+            <Link href="/volunteer">
+              <Button variant="secondary" className="h-16 px-10 text-lg">Apply to Volunteer</Button>
+            </Link>
+          </div>
+          <div className="relative h-[500px]">
+            <div className="absolute inset-0 bg-amber-100/40 rounded-full scale-110 -z-10 blur-3xl" />
+            <div className="absolute inset-0 overflow-hidden rounded-[30px] shadow-cloud border-[12px] border-white">
+              <Image
+                src="/image/Dog.jpeg"
+                alt="Rescue Bond"
+                fill
+                className="object-contain"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Paw Decoration */}
+      <div className="fixed bottom-10 right-10 text-9xl opacity-[0.05] pointer-events-none select-none drop-shadow-sm">🐾</div>
     </main>
   );
 }

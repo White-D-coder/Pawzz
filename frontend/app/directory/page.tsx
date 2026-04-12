@@ -1,9 +1,6 @@
-import React from 'react';
-import Link from 'next/link';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import BookingTrigger from '@/components/directory/BookingTrigger';
 import { Metadata } from 'next';
+import DirectoryContainer from '@/components/directory/DirectoryContainer';
+import DirectorySearch from '@/components/directory/DirectorySearch';
 
 export const metadata: Metadata = {
   title: 'Veterinary Directory | PAWZZ',
@@ -30,100 +27,31 @@ export default async function DirectoryPage({ searchParams }: { searchParams: an
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Hero & Search Console */}
-      <section className="bg-teal-50 py-12 px-4 border-b border-teal-100">
-        <div className="max-w-5xl mx-auto text-center mb-8">
-          <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight mb-4">Find Trusted Pet Care</h1>
-          <p className="text-lg text-gray-600">Discover verified clinics, NGOs, and service providers near you.</p>
+      {/* Hero & Search Console - Re-designed for 'Compassion First' */}
+      <section className="bg-gradient-to-b from-teal-50 to-white py-20 px-4 border-b border-teal-50">
+        <div className="max-w-5xl mx-auto text-center mb-12">
+          <span className="inline-block px-4 py-1.5 bg-amber-100 text-amber-800 text-xs font-black rounded-full mb-6 tracking-widest uppercase shadow-sm">
+            Trusted Partners
+          </span>
+          <h1 className="text-5xl md:text-6xl font-black text-teal-950 tracking-tighter mb-6 leading-tight">
+            Find <span className="text-amber-500">Professional</span> Care
+          </h1>
+          <p className="text-xl text-gray-600 font-medium max-w-2xl mx-auto">Discover veterinary clinics, NGOs, and service providers vetted for compassion and excellence.</p>
         </div>
         
-        <div className="bg-white rounded-xl shadow-lg p-4 flex flex-col md:flex-row gap-4 max-w-5xl mx-auto">
-          <div className="flex-1 relative">
-            <span className="absolute left-3 top-3.5 text-gray-400">📍</span>
-            <input 
-              type="text" 
-              placeholder="Search by city or area..." 
-              className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-700 transition-shadow"
-            />
-          </div>
-          <div className="w-full md:w-48">
-            <select className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-700">
-              <option value="">All Categories</option>
-              <option value="Clinic">Vet Clinic</option>
-              <option value="NGO">NGO Shelter</option>
-            </select>
-          </div>
-          <Button variant="primary" className="py-3 px-8">Search</Button>
-        </div>
+        <DirectorySearch />
       </section>
 
-      {/* Listing Grid */}
-      <section className="max-w-7xl mx-auto px-4 py-12 w-full flex-grow">
+      {/* Listing Grid Hand-off to Client Container */}
+      <section className="max-w-7xl mx-auto px-4 py-16 w-full flex-grow">
         {listings.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="text-6xl mb-4">🔍</div>
-            <h3 className="text-xl font-bold text-gray-900">No providers found</h3>
-            <p className="text-gray-500 mt-2">Try adjusting your search criteria.</p>
+          <div className="text-center py-20 bg-white rounded-[3rem] shadow-sm border border-gray-50">
+            <div className="text-8xl mb-8 animate-bounce delay-75">🔍</div>
+            <h3 className="text-2xl font-black text-teal-950">We couldn't find any care here yet</h3>
+            <p className="text-gray-500 mt-4 font-medium max-w-sm mx-auto">Try adjusting your search criteria or explore a nearby city.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {listings.map((listing: any) => (
-              <Card key={listing._id} className="flex flex-col h-full">
-                <div className="h-48 w-full bg-gray-200 relative">
-                  {/* Placeholder for actual image */}
-                  <div className="absolute top-4 left-4 bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full shadow-sm">
-                    {listing.type}
-                  </div>
-                </div>
-                
-                <div className="p-5 flex-grow">
-                  <div className="flex justify-between items-start mb-1">
-                    <h3 className="text-xl font-bold text-gray-900 line-clamp-1">{listing.name}</h3>
-                    {listing.telemetry?.rating > 0 && (
-                      <div className="flex items-center gap-1 bg-teal-50 text-teal-700 px-2 py-0.5 rounded text-xs font-bold border border-teal-100">
-                        <span>⭐</span> {listing.telemetry.rating}
-                      </div>
-                    )}
-                  </div>
-                  
-                  <p className="text-sm text-gray-500 flex items-start gap-1">
-                    <span>📍</span> {listing.location?.address || 'Location Hidden'}
-                  </p>
-
-                  {listing.telemetry?.reviews_count > 0 && (
-                    <p className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider font-bold">
-                      Based on {listing.telemetry.reviews_count} Reviews
-                    </p>
-                  )}
-                  
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {listing.services?.slice(0, 3).map((service: string, i: number) => (
-                      <span key={i} className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-md">
-                        {service}
-                      </span>
-                    ))}
-                    {listing.services?.length > 3 && (
-                      <span className="text-xs text-teal-700 font-bold self-center">+{listing.services.length - 3} more</span>
-                    )}
-                  </div>
-                </div>
-
-                <div className="p-5 border-t border-gray-100 bg-gray-50 flex justify-between items-center mt-auto">
-                  <div className="flex flex-col">
-                    <div className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">
-                      {listing.verification_status === 'approved' ? '✅ Verified Provider' : '⏳ Pending Review'}
-                    </div>
-                    {listing.telemetry?.total_bookings > 0 && (
-                      <div className="text-[10px] text-teal-600 font-medium">
-                        🔥 {listing.telemetry.total_bookings}+ Bookings
-                      </div>
-                    )}
-                  </div>
-                  <BookingTrigger listingId={listing._id} listingName={listing.name} />
-                </div>
-              </Card>
-            ))}
-          </div>
+          <DirectoryContainer initialListings={listings} />
         )}
       </section>
     </div>

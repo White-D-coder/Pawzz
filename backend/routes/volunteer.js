@@ -11,7 +11,6 @@ const router = express.Router();
 router.post(
   '/submit', 
   protect, 
-  requireRole('Volunteer / City Lead'), 
   upload.single('audio'), 
   submitVolunteerAudio
 );

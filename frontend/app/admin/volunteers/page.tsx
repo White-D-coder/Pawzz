@@ -14,6 +14,7 @@ type VolunteerApplication = {
   audioFileId: string;
   transcript: string | null;
   status: string;
+  location?: { coordinates: [number, number] };
   createdAt: string;
 };
 
@@ -35,6 +36,12 @@ export default function AdminVolunteersPage() {
 
   useEffect(() => {
     fetchVolunteers();
+    
+    const interval = setInterval(() => {
+      fetchVolunteers();
+    }, 15000); // Poll every 15s
+
+    return () => clearInterval(interval);
   }, []);
 
   const handleAction = async (id: string, action: 'accept' | 'reject') => {
@@ -136,6 +143,13 @@ export default function AdminVolunteersPage() {
                   <div className="font-bold text-xl text-gray-900">{selectedApp.formData.fullName}</div>
                   <div className="text-gray-600 mb-1">{selectedApp.formData.email}</div>
                   <div className="text-teal-700 font-medium font-sm bg-teal-50 inline-block px-3 py-1 rounded-md mt-2">{selectedApp.formData.areaOfInterest}</div>
+                  
+                  {selectedApp.location?.coordinates && selectedApp.location.coordinates.length > 0 && (
+                    <div className="mt-4 flex items-center gap-2 text-xs font-bold text-amber-600 uppercase tracking-widest">
+                      <span>📍 Location Captured:</span>
+                      <span>{selectedApp.location.coordinates[1].toFixed(4)}, {selectedApp.location.coordinates[0].toFixed(4)}</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="mb-6">

@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Outfit } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import ChatWidget from "@/components/chat/ChatWidget";
 
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
-const inter = Inter({ 
+const outfit = Outfit({ 
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-outfit",
 });
 
 export const metadata: Metadata = {
@@ -39,7 +40,7 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body className={`${inter.variable} font-sans bg-gray-50 text-gray-900 antialiased`}>
+      <body className={`${outfit.variable} font-sans`}>
         <GoogleOAuthProvider clientId={clientId}>
           <AuthProvider>
             <Navbar />
@@ -47,6 +48,7 @@ export default function RootLayout({
               {children}
             </div>
             <Footer />
+            <ChatWidget />
           </AuthProvider>
         </GoogleOAuthProvider>
       </body>

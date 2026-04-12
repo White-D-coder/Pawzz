@@ -1,12 +1,12 @@
 import express from 'express';
-import { createOrder, verifyPayment } from '../controllers/paymentController.js';
+import { getChatHistory, sendMessage } from '../controllers/chatController.js';
 import { protect } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
 router.use(protect);
 
-router.post('/orders', createOrder);
-router.post('/verify', verifyPayment);
+router.get('/:otherUserId', getChatHistory);
+router.post('/', sendMessage);
 
 export default router;

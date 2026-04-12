@@ -14,8 +14,8 @@ const Card = ({ className, children, hoverEffect = true, ...props }: CardProps) 
   return (
     <div
       className={cn(
-        'bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden transition-shadow',
-        hoverEffect && 'hover:shadow-xl',
+        'bg-white rounded-[2rem] border border-gray-100 shadow-cloud overflow-hidden transition-all duration-300',
+        hoverEffect && 'hover:shadow-cloud-lg hover:-translate-y-1',
         className
       )}
       {...props}

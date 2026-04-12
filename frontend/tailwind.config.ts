@@ -42,7 +42,7 @@ const config: Config = {
         }
       },
       fontFamily: {
-        sans: ['var(--font-inter)', 'sans-serif'],
+        sans: ['var(--font-outfit)', 'sans-serif'],
       },
       borderRadius: {
         'lg': '8px',    // Inputs

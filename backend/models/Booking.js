@@ -1,32 +1,30 @@
 import mongoose from 'mongoose';
 
 const bookingSchema = new mongoose.Schema({
-  userId: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'User', 
-    required: true 
+  petParent: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   },
-  providerId: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Listing', 
-    required: true 
+  provider: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Listing',
+    required: true
   },
-  time_slot: { 
-    type: Date, 
-    required: true 
+  slotTime: {
+    type: String,
+    required: true
   },
-  status: { 
-    type: String, 
-    enum: ['available', 'pending', 'confirmed', 'cancelled'], 
-    default: 'available' 
+  status: {
+    type: String,
+    enum: ['pending', 'confirmed', 'completed', 'cancelled'],
+    default: 'confirmed'
   },
-  paymentRef: { 
-    type: String, 
-    default: null 
+  petInfo: {
+    name: String,
+    type: String,
+    note: String
   }
 }, { timestamps: true });
-
-// CRITICAL: Compound index for atomic concurrency as per technical-architect.md
-bookingSchema.index({ providerId: 1, time_slot: 1, status: 1 });
 
 export const Booking = mongoose.model('Booking', bookingSchema);
