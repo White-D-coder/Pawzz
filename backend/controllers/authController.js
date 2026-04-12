@@ -97,8 +97,8 @@ export const googleLogin = async (req, res) => {
     // 4. Set HttpOnly Cookie
     res.cookie('pawzz_token', jwtToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      secure: true, // MUST be true for SameSite: None
+      sameSite: 'none', // Required for cross-site (localhost to render)
       maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     });
 
@@ -147,6 +147,10 @@ export const getMe = async (req, res) => {
  * Clear Session
  */
 export const logout = (req, res) => {
-  res.clearCookie('pawzz_token');
+  res.clearCookie('pawzz_token', {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none'
+  });
   return sendSuccess(res, null, 'Logged out successfully');
 };
