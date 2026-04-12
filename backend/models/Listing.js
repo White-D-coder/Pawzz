@@ -42,8 +42,9 @@ const listingSchema = new mongoose.Schema({
     default: 'pending' 
   },
   slots: [{
+    date: { type: String, required: true }, // YYYY-MM-DD
     time: String, // e.g. "09:00 AM"
-    isLocked: { type: Boolean, default: false },
+    isLocked: { type: Boolean, default: true }, // Default Locked for production safety
     isBooked: { type: Boolean, default: false },
     currentBooking: { type: mongoose.Schema.Types.ObjectId, ref: 'Booking' }
   }]

@@ -8,31 +8,40 @@ import { sendSuccess, sendError } from '../utils/responseHelper.js';
  */
 export const createBooking = async (req, res) => {
   try {
-    const { listingId, slotDate, slotTime } = req.body;
+    const { listingId, slotDate, slotTime, petInfo } = req.body; // slotDate: YYYY-MM-DD
     const userId = req.user.id;
 
-    // 1. Verify listing exists
-    const listing = await Listing.findById(listingId);
-    if (!listing) return sendError(res, 'NOT_FOUND', 'Listing not found', 404);
+    // 1. Atomically verify slot availability within Listing
+    const listing = await Listing.findOneAndUpdate(
+      { 
+        _id: listingId,
+        "slots.date": slotDate,
+        "slots.time": slotTime,
+        "slots.isLocked": false,
+        "slots.isBooked": false
+      },
+      { 
+        $set: { "slots.$.isBooked": true }
+      },
+      { new: true }
+    );
 
-    // 2. Atomic Reservation
-    // Extract date and time to create a single time_slot Date object
-    const [hours, minutes] = slotTime.split(':');
-    const timeSlotDate = new Date(slotDate);
-    timeSlotDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+    if (!listing) {
+      return sendError(res, 'CONFLICT', 'Slot is either locked, already booked, or does not exist for this date.', 409);
+    }
 
+    // 2. Create the Booking entry
     const booking = await Booking.create({
-      userId: userId,
-      providerId: listingId,
-      time_slot: timeSlotDate,
+      petParent: userId,
+      provider: listingId,
+      date: slotDate,
+      slotTime: slotTime,
+      petInfo: petInfo || { name: 'Pet', type: 'Consultation' },
       status: 'confirmed'
     });
 
     return sendSuccess(res, { booking }, 'Slot booked successfully!', 201);
   } catch (error) {
-    if (error.code === 11000) {
-      return sendError(res, 'CONFLICT', 'This slot is already booked. Please choose another.', 409);
-    }
     console.error('❌ Booking Error:', error);
     return sendError(res, 'DB_ERROR', 'Failed to complete booking');
   }

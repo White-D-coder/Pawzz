@@ -39,10 +39,15 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       
       // Redirect based on role
       if (loggedInUser.role === 'Admin') {
-        console.log("🚀 Redirecting to Admin Panel...");
         router.push('/admin');
+      } else if (loggedInUser.role === 'Vet Clinic') {
+        router.push('/clinic');
+      } else if (loggedInUser.role === 'NGO') {
+        router.push('/ngo');
+      } else if (loggedInUser.role === 'Volunteer / City Lead' || loggedInUser.role === 'Volunteer') {
+        router.push('/volunteer-dashboard');
       } else {
-        console.log("🏠 Not an Admin, staying on home page.");
+        router.push('/');
       }
     } catch (err) {
       console.error("❌ Login redirection failed:", err);

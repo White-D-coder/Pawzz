@@ -37,3 +37,18 @@ export const verifyPayment = async (req, res) => {
   // For now, we'll implement this as a success bridge
   return sendSuccess(res, null, 'Payment verified');
 };
+
+/**
+ * Handle Razorpay Webhooks (Payment Succeeded, failed, etc.)
+ */
+export const handleWebhook = async (req, res) => {
+  try {
+    const secret = process.env.RAZORPAY_WEBHOOK_SECRET || 'your_secret';
+    // Validate signature here...
+    console.log("⚓ Webhook Received:", req.body);
+    return res.status(200).json({ status: 'ok' });
+  } catch (error) {
+    console.error("❌ Webhook Error:", error);
+    return res.status(500).json({ status: 'error' });
+  }
+};

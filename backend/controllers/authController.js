@@ -56,27 +56,29 @@ export const googleLogin = async (req, res) => {
 
       let finalRole = 'Pet Parent';
       let approved = false;
+      let currentStatus = 'pending';
 
-      if (role === 'Admin') {
-        if (isAdminWhitelisted) {
-          finalRole = 'Admin';
-          approved = true;
-        } else {
-          return sendError(res, 'FORBIDDEN', 'You are not authorized to be an Admin', 403);
-        }
-      } else if (role !== 'Pet Parent') {
-        finalRole = role; // Keep the requested role
-        approved = false; // But mark as unapproved
-      } else {
+      if (role === 'Admin' && isAdminWhitelisted) {
+        finalRole = 'Admin';
+        approved = true;
+        currentStatus = 'active';
+      } else if (role === 'Pet Parent') {
         finalRole = 'Pet Parent';
         approved = true;
+        currentStatus = 'active';
+      } else {
+        // Professional Roles starts as Pet Parent with a request
+        finalRole = 'Pet Parent'; 
+        approved = false;
+        currentStatus = 'pending';
       }
 
       user = await User.create({
         email,
         role: finalRole,
         isApproved: approved,
-        requestedRole: (finalRole !== role) ? role : null,
+        status: currentStatus,
+        requestedRole: (role !== 'Pet Parent') ? role : null,
         profile: { name, avatar: picture }
       });
     } else {

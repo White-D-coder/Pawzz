@@ -9,6 +9,7 @@ export default function ClinicDashboard() {
   const { user } = useAuth();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
 
   const fetchClinicData = async () => {
     try {
@@ -27,8 +28,11 @@ export default function ClinicDashboard() {
 
   const toggleSlot = async (time: string) => {
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/clinic/slots/toggle`, { slotTime: time }, { withCredentials: true });
-      fetchClinicData(); // Refresh data and UI
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/clinic/slots/toggle`, { 
+        date: selectedDate,
+        slotTime: time 
+      }, { withCredentials: true });
+      fetchClinicData(); 
     } catch (err) {
       alert("Failed to update slot");
     }
@@ -42,6 +46,13 @@ export default function ClinicDashboard() {
 
   const listing = data?.listing;
   const bookings = data?.bookings || [];
+  
+  // Helper to get next 7 days for the calendar bar
+  const next7Days = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() + i);
+    return d.toISOString().split('T')[0];
+  });
 
   return (
     <div className="min-h-screen bg-gray-50 pt-32 pb-20 px-6 sm:px-10">
@@ -108,21 +119,32 @@ export default function ClinicDashboard() {
 
               {/* LIVE SLOT MANAGER */}
               <div className="bg-white rounded-[3rem] shadow-cloud border border-gray-100 p-10">
-                 <div className="flex justify-between items-center mb-8">
+                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-6">
                     <div>
                       <h2 className="text-2xl font-black text-teal-950 tracking-tighter">Live Slot Manager</h2>
-                      <p className="text-sm text-gray-500 font-medium tracking-tight">One-tap toggle for client availability.</p>
+                      <p className="text-sm text-gray-500 font-medium tracking-tight">Managing availability for {new Date(selectedDate).toLocaleDateString()}.</p>
                     </div>
-                    <div className="flex gap-2">
-                       <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-teal-500"></div> <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Open</span></div>
-                       <div className="flex items-center gap-2 ml-4"><div className="w-3 h-3 rounded-full bg-red-400"></div> <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Locked</span></div>
+                    <div className="flex flex-wrap gap-2">
+                       {next7Days.map((date) => (
+                         <button
+                           key={date}
+                           onClick={() => setSelectedDate(date)}
+                           className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border-2 transition-all ${
+                             selectedDate === date 
+                             ? 'bg-teal-700 border-teal-700 text-white shadow-md' 
+                             : 'bg-white border-gray-100 text-gray-400 hover:border-teal-500 hover:text-teal-500'
+                           }`}
+                         >
+                           {new Date(date).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' })}
+                         </button>
+                       ))}
                     </div>
                  </div>
 
                  <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4">
                     {['09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM', '07:00 PM', '08:00 PM'].map((time, i) => {
-                      const slotData = listing?.slots?.find((s: any) => s.time === time);
-                      const isLocked = slotData?.isLocked;
+                      const slotData = listing?.slots?.find((s: any) => s.date === selectedDate && s.time === time);
+                      const isLocked = slotData ? slotData.isLocked : true; // Default locked if not mentioned in DB yet
                       const isBooked = slotData?.isBooked;
 
                       return (

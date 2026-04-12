@@ -19,6 +19,11 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  status: {
+    type: String,
+    enum: ['active', 'pending', 'rejected', 'suspended'],
+    default: 'pending'
+  },
   requestedRole: {
     type: String,
     enum: ['Pet Parent', 'Vet Clinic', 'NGO', 'Service Provider', 'Volunteer / City Lead', 'Admin'],

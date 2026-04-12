@@ -38,25 +38,27 @@ export const getClinicData = async (req, res) => {
  */
 export const toggleSlot = async (req, res) => {
   try {
-    const { slotTime } = req.body;
+    const { date, slotTime } = req.body; // date format: YYYY-MM-DD
+    if (!date || !slotTime) return sendError(res, 'BAD_REQUEST', 'Date and Time are required', 400);
+
     let listing = await Listing.findOne({ ownerId: req.user.id });
     
     if (!listing) {
-       // Should be handled by getClinicData first, but for safety:
-       return sendError(res, 'NOT_FOUND', 'Clinic not yet initialized. Please refresh.', 404);
-    }
+       return sendError(res, 'NOT_FOUND', 'Clinic not yet initialized.', 404);
+     }
 
-    // Find slot or create if doesn't exist (Dynamic slots)
-    let slot = listing.slots.find(s => s.time === slotTime);
+    // Find slot by date AND time
+    let slot = listing.slots.find(s => s.date === date && s.time === slotTime);
     
     if (slot) {
       slot.isLocked = !slot.isLocked;
     } else {
-      listing.slots.push({ time: slotTime, isLocked: true });
+      // Create a NEW slot entry for this date/time if it doesn't exist
+      listing.slots.push({ date, time: slotTime, isLocked: false }); // We unlock it if explicitly requested
     }
 
     await listing.save();
-    return sendSuccess(res, { listing }, `Slot ${slotTime} toggled`);
+    return sendSuccess(res, { listing }, `Slot ${slotTime} on ${date} toggled`);
   } catch (error) {
     return sendError(res, 'SERVER_ERROR', error.message);
   }
