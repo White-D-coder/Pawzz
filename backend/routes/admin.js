@@ -1,7 +1,8 @@
 import express from 'express';
 import { 
   getVolunteers, updateVolunteerStatus, getPendingListings, approveListing, 
-  getAllBookings, updateSettings, getPendingUsers, approveUser, getAllUsers 
+  getAllBookings, updateSettings, getPendingUsers, approveUser, getAllUsers,
+  updateUser, deleteUser 
 } from '../controllers/adminController.js';
 import { protect, requireRole } from '../middlewares/authMiddleware.js';
 
@@ -11,6 +12,8 @@ router.use(protect);
 router.use(requireRole('Admin'));
 
 router.get('/users', getAllUsers);
+router.put('/users/:userId', updateUser);
+router.delete('/users/:userId', deleteUser);
 router.get('/volunteers', getVolunteers);
 router.patch('/volunteers/:id', updateVolunteerStatus);
 router.get('/listings/pending', getPendingListings);

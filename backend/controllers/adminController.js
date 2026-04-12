@@ -26,27 +26,49 @@ export const getPendingUsers = async (req, res, next) => {
 export const approveUser = async (req, res, next) => {
   try {
     const { userId, approve } = req.body;
-    
-    if (approve) {
-      const user = await User.findById(userId);
-      if (!user) return sendError(res, "NOT_FOUND", "User not found", 404);
-      
-      const oldRole = user.role;
-      user.role = user.requestedRole;
-      user.isApproved = true;
-      user.requestedRole = null;
-      await user.save();
-      
-      // REAL-TIME BROADCAST
-      emitUpdate(`user_${userId}`, 'role-updated', { role: user.role, isApproved: true });
-      emitUpdate(null, 'new-user-approved', { role: user.role, id: userId });
+    const user = await User.findById(userId);
+    if (!user) return sendError(res, "NOT_FOUND", "User not found", 404);
 
-      return sendSuccess(res, { user }, `User approved as ${user.role}`);
+    if (approve) {
+      user.role = user.requestedRole || user.role;
+      user.isApproved = true;
+      user.status = 'active';
+      user.requestedRole = null;
     } else {
-      // Reject
-      await User.findByIdAndUpdate(userId, { requestedRole: null, isApproved: true }); // Stays as Pet Parent
-      return sendSuccess(res, null, "User request rejected");
+      user.status = 'rejected';
+      user.requestedRole = null; // Rejection keeps them as Pet Parent but removes the request
     }
+
+    await user.save();
+    emitUpdate(`user_${userId}`, 'account-status-updated', { role: user.role, status: user.status });
+    return sendSuccess(res, { user }, `User ${approve ? 'approved' : 'rejected'}`);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateUser = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const { role, status, isApproved } = req.body;
+
+    const user = await User.findByIdAndUpdate(userId, { role, status, isApproved }, { new: true });
+    if (!user) return sendError(res, "NOT_FOUND", "User not found", 404);
+
+    emitUpdate(`user_${userId}`, 'role-updated', { role: user.role, status: user.status });
+    return sendSuccess(res, { user }, "User profile updated");
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteUser = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findByIdAndDelete(userId);
+    if (!user) return sendError(res, "NOT_FOUND", "User not found", 404);
+
+    return sendSuccess(res, null, "User deleted from system");
   } catch (error) {
     next(error);
   }
