@@ -4,12 +4,20 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/Button';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 export default function ClinicDashboard() {
   const { user } = useAuth();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && (!user || user.role !== 'Vet Clinic')) {
+       router.push('/');
+    }
+  }, [user, loading, router]);
 
   const fetchClinicData = async () => {
     try {

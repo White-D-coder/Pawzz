@@ -8,6 +8,8 @@ interface User {
   id: string;
   email: string;
   role: string;
+  isApproved: boolean;
+  status: string;
   profile: {
     name: string;
     avatar: string;
