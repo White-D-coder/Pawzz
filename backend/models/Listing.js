@@ -25,18 +25,28 @@ const listingSchema = new mongoose.Schema({
     }
   },
   services: [String],
+  price: { type: Number, default: 0 },
+  imageUrl: { type: String, default: 'https://images.unsplash.com/photo-1596731221715-db14bbdaac62' },
+  description: { type: String, default: '' },
   phone: String,
   email: String,
   telemetry: {
     rating: { type: Number, default: 0 },
     reviews_count: { type: Number, default: 0 },
-    total_bookings: { type: Number, default: 0 }
+    total_bookings: { type: Number, default: 0 },
+    years_experience: { type: Number, default: 5 },
   },
   verification_status: { 
     type: String, 
     enum: ['pending', 'approved', 'rejected'], 
     default: 'pending' 
-  }
+  },
+  slots: [{
+    time: String, // e.g. "09:00 AM"
+    isLocked: { type: Boolean, default: false },
+    isBooked: { type: Boolean, default: false },
+    currentBooking: { type: mongoose.Schema.Types.ObjectId, ref: 'Booking' }
+  }]
 }, { timestamps: true });
 
 // Indexes as per specs

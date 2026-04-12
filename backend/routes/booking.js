@@ -3,6 +3,8 @@ import { createBooking, getMyBookings } from '../controllers/bookingController.j
 import { protect } from '../middlewares/authMiddleware.js';
 import { validate, bookingSchema } from '../validators/schemas.js';
 
+import { getSettings } from '../controllers/adminController.js';
+
 const router = express.Router();
 
 /**
@@ -10,6 +12,7 @@ const router = express.Router();
  */
 router.use(protect);
 
+router.get('/settings', getSettings);
 router.get('/my', getMyBookings);
 router.post('/', validate(bookingSchema), createBooking);
 

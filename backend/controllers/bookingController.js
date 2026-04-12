@@ -16,16 +16,16 @@ export const createBooking = async (req, res) => {
     if (!listing) return sendError(res, 'NOT_FOUND', 'Listing not found', 404);
 
     // 2. Atomic Reservation
-    // We attempt to create the booking. The unique index in the Booking model 
-    // [listingId + slotDate + slotTime] will automatically reject duplicates 
-    // at the DB layer, preventing double-booking even under heavy load.
-    
+    // Extract date and time to create a single time_slot Date object
+    const [hours, minutes] = slotTime.split(':');
+    const timeSlotDate = new Date(slotDate);
+    timeSlotDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+
     const booking = await Booking.create({
-      user: userId,
-      listing: listingId,
-      slotDate: new Date(slotDate),
-      slotTime,
-      status: 'confirmed' // Or 'pending' if payment is required
+      userId: userId,
+      providerId: listingId,
+      time_slot: timeSlotDate,
+      status: 'confirmed'
     });
 
     return sendSuccess(res, { booking }, 'Slot booked successfully!', 201);
@@ -43,9 +43,10 @@ export const createBooking = async (req, res) => {
  */
 export const getMyBookings = async (req, res) => {
   try {
-    const bookings = await Booking.find({ user: req.user.id }).populate('listing');
+    const bookings = await Booking.find({ userId: req.user.id }).populate('providerId');
     return sendSuccess(res, { bookings }, 'Fetched active bookings');
   } catch (error) {
+    console.error('❌ Fetch Bookings Error:', error);
     return sendError(res, 'DB_ERROR', 'Failed to fetch bookings');
   }
 };
