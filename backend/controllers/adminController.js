@@ -131,7 +131,11 @@ import { GlobalSetting } from '../models/GlobalSetting.js';
 
 export const getAllBookings = async (req, res, next) => {
   try {
-    const bookings = await Booking.find({}).populate('userId', 'email profile.name').populate('providerId', 'title type location').sort({ time_slot: 1 }).lean();
+    const bookings = await Booking.find({})
+      .populate('petParent', 'email profile.name')
+      .populate('provider', 'name type location')
+      .sort({ date: 1, slotTime: 1 })
+      .lean();
     return sendSuccess(res, { bookings }, "Fetched all bookings");
   } catch (error) {
     next(error);
