@@ -6,23 +6,24 @@ const volunteerSubmissionSchema = new mongoose.Schema({
     ref: 'User', 
     required: true 
   },
+  title: String,
   formData: {
     fullName: String,
     email: String,
     areaOfInterest: String
   },
-  audio_url: { 
-    type: String, 
+  audioFileId: { 
+    type: mongoose.Schema.Types.ObjectId, 
     required: true 
-  }, // GridFS file ObjectId as string
+  }, // GridFS file ObjectId
   transcript: { 
     type: String, 
     default: null 
   },
   status: { 
     type: String, 
-    enum: ['pending review', 'accepted', 'rejected'], 
-    default: 'pending review' 
+    enum: ['processing', 'completed', 'pending review', 'accepted', 'rejected'], 
+    default: 'processing' 
   },
   processingError: { 
     type: String, 

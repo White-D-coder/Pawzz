@@ -19,6 +19,10 @@ const userSchema = new mongoose.Schema({
     name: String,
     phone: String,
     avatar: String
+  },
+  volunteer_stats: {
+    active_rescues: { type: Number, default: 0 },
+    hours_logged: { type: Number, default: 0 }
   }
 }, { timestamps: true });
 

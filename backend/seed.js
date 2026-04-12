@@ -59,6 +59,22 @@ async function seed() {
   await Listing.insertMany(doctors);
   console.log("Seeded " + doctors.length + " vet doctors/NGOs!");
 
+  const volunteers = [
+    {
+      email: 'alex.volunteer@pawzz.in',
+      role: 'Volunteer / City Lead',
+      profile: { name: 'Alex Doe', phone: '1231231234' }
+    },
+    {
+      email: 'sam.rescue@pawzz.in',
+      role: 'Volunteer / City Lead',
+      profile: { name: 'Sam Smith', phone: '3213213210' }
+    }
+  ];
+
+  await User.insertMany(volunteers);
+  console.log("Seeded " + volunteers.length + " volunteers!");
+
   process.exit();
 }
 seed().catch(console.error);

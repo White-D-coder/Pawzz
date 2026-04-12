@@ -1,6 +1,6 @@
 import { razorpayInstance, verifyRazorpaySignature } from '../services/razorpayService.js';
 import { Booking } from '../models/Booking.js';
-import { responseHelper } from '../utils/responseHelper.js';
+import { sendSuccess, sendError } from '../utils/responseHelper.js';
 
 export const createOrder = async (req, res, next) => {
   try {
@@ -8,11 +8,11 @@ export const createOrder = async (req, res, next) => {
     const booking = await Booking.findById(bookingId);
 
     if (!booking) {
-      return responseHelper.error(res, 404, "NOT_FOUND", "Booking not found");
+      return sendError(res, "NOT_FOUND", "Booking not found", 404);
     }
 
     if (booking.status !== 'pending') {
-      return responseHelper.error(res, 400, "BAD_REQUEST", "Booking is not in pending state");
+      return sendError(res, "BAD_REQUEST", "Booking is not in pending state", 400);
     }
 
     const order = await razorpayInstance.orders.create({
@@ -21,7 +21,7 @@ export const createOrder = async (req, res, next) => {
       receipt: `receipt_${bookingId}`
     });
 
-    return responseHelper.success(res, 200, {
+    return sendSuccess(res, {
       orderId: order.id,
       amount: order.amount,
       currency: order.currency,

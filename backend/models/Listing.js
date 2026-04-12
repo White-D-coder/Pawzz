@@ -27,6 +27,11 @@ const listingSchema = new mongoose.Schema({
   services: [String],
   phone: String,
   email: String,
+  telemetry: {
+    rating: { type: Number, default: 0 },
+    reviews_count: { type: Number, default: 0 },
+    total_bookings: { type: Number, default: 0 }
+  },
   verification_status: { 
     type: String, 
     enum: ['pending', 'approved', 'rejected'], 

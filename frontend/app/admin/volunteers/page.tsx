@@ -11,7 +11,7 @@ type VolunteerApplication = {
     email: string;
     areaOfInterest: string;
   };
-  audio_url: string;
+  audioFileId: string;
   transcript: string | null;
   status: string;
   createdAt: string;
@@ -85,6 +85,7 @@ export default function AdminVolunteersPage() {
                   <td className="px-6 py-4 text-sm text-gray-600">{new Date(v.createdAt).toLocaleDateString()}</td>
                   <td className="px-6 py-4">
                     <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                      v.status === 'processing' ? 'bg-blue-100 text-blue-800 animate-pulse' :
                       v.status === 'pending review' ? 'bg-amber-100 text-amber-800' :
                       v.status === 'accepted' ? 'bg-emerald-100 text-emerald-800' :
                       'bg-red-100 text-red-800'
@@ -142,12 +143,12 @@ export default function AdminVolunteersPage() {
                   <audio 
                     controls 
                     className="w-full mb-4" 
-                    src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/volunteers/audio/${selectedApp.audio_url}`} 
+                    src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/volunteers/audio/${selectedApp.audioFileId}`} 
                   />
                   
                   <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">AI Transcript</h4>
                   <div className="bg-gray-100 p-4 rounded-xl text-gray-800 italic leading-relaxed min-h-[120px]">
-                    {selectedApp.transcript || <span className="text-gray-400">Transcription is still processing or unavailable...</span>}
+                    {selectedApp.transcript || <span className="text-gray-400">Transcription is still processing...</span>}
                   </div>
                 </div>
               </div>

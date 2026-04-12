@@ -14,6 +14,7 @@ import bookingRoutes from './routes/booking.js';
 import adminRoutes from './routes/admin.js';
 import paymentRoutes from './routes/payment.js';
 import webhookRoutes from './routes/webhook.js';
+import volunteerRoutes from './routes/volunteer.js';
 
 const app = express();
 
@@ -37,6 +38,12 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
 }));
 app.use(morgan('dev')); // Request Logging
+
+// Fix for Google OAuth popups COOP policy
+app.use((req, res, next) => {
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+  next();
+});
 
 // Mount webhook BEFORE json parser so it receives raw buffers for HMAC validation
 app.use('/api/webhook', webhookRoutes);

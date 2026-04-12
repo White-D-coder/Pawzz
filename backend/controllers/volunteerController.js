@@ -22,7 +22,7 @@ export const submitVolunteerAudio = async (req, res) => {
 
     // 1. Create Submission Record
     const submission = await VolunteerSubmission.create({
-      user: req.user.id,
+      userId: req.user.id,
       title,
       audioFileId: file.id, // ID from GridFS
       status: 'processing'
@@ -37,8 +37,8 @@ export const submitVolunteerAudio = async (req, res) => {
     worker.on('message', async (result) => {
       if (result.success) {
         await VolunteerSubmission.findByIdAndUpdate(submission._id, {
-          transcription: result.transcription,
-          status: 'completed'
+          transcript: result.transcription,
+          status: 'pending review'
         });
         console.log(`✅ Transcription completed for submission ${submission._id}`);
       }

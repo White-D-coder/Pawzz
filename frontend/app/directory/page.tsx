@@ -77,10 +77,24 @@ export default async function DirectoryPage({ searchParams }: { searchParams: an
                 </div>
                 
                 <div className="p-5 flex-grow">
-                  <h3 className="text-xl font-bold text-gray-900 line-clamp-1">{listing.name}</h3>
-                  <p className="text-sm text-gray-500 mt-2 flex items-start gap-1">
+                  <div className="flex justify-between items-start mb-1">
+                    <h3 className="text-xl font-bold text-gray-900 line-clamp-1">{listing.name}</h3>
+                    {listing.telemetry?.rating > 0 && (
+                      <div className="flex items-center gap-1 bg-teal-50 text-teal-700 px-2 py-0.5 rounded text-xs font-bold border border-teal-100">
+                        <span>⭐</span> {listing.telemetry.rating}
+                      </div>
+                    )}
+                  </div>
+                  
+                  <p className="text-sm text-gray-500 flex items-start gap-1">
                     <span>📍</span> {listing.location?.address || 'Location Hidden'}
                   </p>
+
+                  {listing.telemetry?.reviews_count > 0 && (
+                    <p className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider font-bold">
+                      Based on {listing.telemetry.reviews_count} Reviews
+                    </p>
+                  )}
                   
                   <div className="mt-4 flex flex-wrap gap-2">
                     {listing.services?.slice(0, 3).map((service: string, i: number) => (
@@ -95,8 +109,15 @@ export default async function DirectoryPage({ searchParams }: { searchParams: an
                 </div>
 
                 <div className="p-5 border-t border-gray-100 bg-gray-50 flex justify-between items-center mt-auto">
-                  <div className="text-xs text-gray-400">
-                    {listing.verified ? '✅ Verified Provider' : '⏳ Pending Review'}
+                  <div className="flex flex-col">
+                    <div className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">
+                      {listing.verification_status === 'approved' ? '✅ Verified Provider' : '⏳ Pending Review'}
+                    </div>
+                    {listing.telemetry?.total_bookings > 0 && (
+                      <div className="text-[10px] text-teal-600 font-medium">
+                        🔥 {listing.telemetry.total_bookings}+ Bookings
+                      </div>
+                    )}
                   </div>
                   <BookingTrigger listingId={listing._id} listingName={listing.name} />
                 </div>
