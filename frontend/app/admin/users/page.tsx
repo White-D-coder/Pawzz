@@ -46,6 +46,43 @@ export default function AdminUsersPage() {
     }
   };
 
+  const handleRoleChange = async (userId: string, newRole: string) => {
+    try {
+      await axios.put(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/admin/update-user/${userId}`, { role: newRole }, { withCredentials: true });
+      fetchUsers();
+    } catch (err) {
+      alert("Failed to update role");
+    }
+  };
+
+  const handleDelete = async (userId: string) => {
+    if (!confirm("Are you SURE? This user will be gone permanently!")) return;
+    try {
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/admin/delete-user/${userId}`, { withCredentials: true });
+      fetchUsers();
+    } catch (err) {
+      alert("Failed to delete user");
+    }
+  };
+
+  const handleToggleApproval = async (userId: string, current: boolean) => {
+    try {
+      await axios.put(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/admin/update-user/${userId}`, { isApproved: !current }, { withCredentials: true });
+      fetchUsers();
+    } catch (err) {
+      alert("Failed to toggle approval");
+    }
+  };
+
+  const handleApprovalAction = async (userId: string, approve: boolean) => {
+    try {
+      await axios.patch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/admin/users/approve`, { userId, approve }, { withCredentials: true });
+      fetchUsers();
+    } catch (err) {
+      alert("Action failed");
+    }
+  };
+
   return (
     <div className="space-y-10 pb-20">
       <div className="flex justify-between items-center">
@@ -74,50 +111,86 @@ export default function AdminUsersPage() {
       </div>
 
       {/* Users Table */}
-      <div className="bg-white rounded-[2.5rem] shadow-cloud border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-[3rem] shadow-cloud border border-gray-100 overflow-hidden">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-100 text-[10px] text-gray-400 font-black uppercase tracking-widest">
               <th className="px-8 py-6">Identity / Name</th>
-              <th className="px-8 py-6">Assigned Role</th>
-              <th className="px-8 py-6 text-center">Status</th>
-              <th className="px-8 py-6 text-right">Joined</th>
+              <th className="px-8 py-6">Current Role</th>
+              <th className="px-8 py-6">Verification Request</th>
+              <th className="px-8 py-6 text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
             {loading ? (
-              <tr><td colSpan={4} className="text-center py-20 animate-pulse text-teal-900 font-bold">Accessing Secure Records...</td></tr>
+              <tr><td colSpan={4} className="text-center py-20 animate-pulse text-teal-900 font-bold uppercase tracking-[0.5em]">Syncing encrypted records...</td></tr>
             ) : users.length === 0 ? (
-              <tr><td colSpan={4} className="text-center py-12 text-gray-400 font-bold italic">No users found.</td></tr>
+              <tr><td colSpan={4} className="text-center py-12 text-gray-400 font-bold italic">No users found in database.</td></tr>
             ) : (
-              users.map((user) => (
+              users.map((user: any) => (
                 <tr key={user._id} className="hover:bg-gray-50/50 transition-colors group">
-                  <td className="px-8 py-6 text-sm font-bold">
+                  <td className="px-8 py-6">
                     <div className="flex items-center gap-4">
-                       <img src={user.profile.avatar} className="w-10 h-10 rounded-2xl shadow-sm border-2 border-white ring-4 ring-teal-50/50" alt="" />
+                       <img src={user.profile?.avatar} className="w-10 h-10 rounded-2xl shadow-sm border-2 border-white ring-4 ring-teal-50/50" alt="" />
                        <div>
-                          <div className="text-gray-900 font-black tracking-tight">{user.profile.name}</div>
+                          <div className="text-gray-900 font-black tracking-tight">{user.profile?.name}</div>
                           <div className="text-[10px] text-gray-400 font-extrabold uppercase mt-0.5">{user.email}</div>
                        </div>
                     </div>
                   </td>
                   <td className="px-8 py-6">
-                    <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border
-                      ${user.role === 'Admin' ? 'bg-teal-50 text-teal-700 border-teal-100' : 
-                        user.role === 'Pet Parent' ? 'bg-gray-50 text-gray-500 border-gray-100' : 
-                        'bg-amber-50 text-amber-700 border-amber-100'}`}>
-                      {user.role}
-                    </span>
+                    <select 
+                      value={user.role}
+                      onChange={(e) => handleRoleChange(user._id, e.target.value)}
+                      className={`text-[10px] font-black uppercase tracking-widest outline-none cursor-pointer px-2 py-1 rounded-lg border-none ${
+                        user.role === 'Admin' ? 'text-teal-600 bg-teal-50' : 'text-gray-600 bg-gray-50'
+                      }`}
+                    >
+                       <option value="Pet Parent">Pet Parent</option>
+                       <option value="Vet Clinic">Vet Clinic</option>
+                       <option value="NGO">NGO</option>
+                       <option value="Volunteer">Volunteer</option>
+                       <option value="Admin">Admin</option>
+                    </select>
                   </td>
-                  <td className="px-8 py-6 text-center">
-                    {user.isApproved ? (
-                      <span className="text-teal-500 font-black text-xs">● APPROVED</span>
+                  <td className="px-8 py-6">
+                    {user.requestedRole ? (
+                      <div className="flex items-center gap-3">
+                         <div className="flex flex-col">
+                            <span className="text-[9px] font-black text-amber-600 uppercase tracking-tighter italic">Requested Role:</span>
+                            <span className="text-xs font-black text-gray-900">{user.requestedRole}</span>
+                         </div>
+                         <div className="flex gap-1">
+                            <button 
+                               onClick={() => handleApprovalAction(user._id, true)}
+                               className="bg-teal-500 hover:bg-teal-600 text-white text-[9px] font-black uppercase px-3 py-1.5 rounded-xl shadow-sm transition-all"
+                            >
+                               Accept
+                            </button>
+                            <button 
+                               onClick={() => handleApprovalAction(user._id, false)}
+                               className="bg-gray-100 hover:bg-red-50 text-gray-400 hover:text-red-500 text-[9px] font-black uppercase px-3 py-1.5 rounded-xl transition-all"
+                            >
+                               Reject
+                            </button>
+                         </div>
+                      </div>
                     ) : (
-                      <span className="text-amber-500 font-black text-xs animate-pulse">● PENDING</span>
+                      <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider border
+                         ${user.isApproved ? 'bg-teal-50 text-teal-600 border-teal-100' : 'bg-gray-50 text-gray-400 border-gray-100'}`}>
+                        {user.isApproved ? '● Verified Professional' : '● standard user'}
+                      </span>
                     )}
                   </td>
-                  <td className="px-8 py-6 text-right text-[11px] font-bold text-gray-400 uppercase">
-                    {new Date(user.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric'})}
+                  <td className="px-8 py-6 text-right">
+                     <button 
+                       onClick={() => handleDelete(user._id)}
+                       className="p-3 text-red-300 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all opacity-0 group-hover:opacity-100"
+                     >
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                     </button>
                   </td>
                 </tr>
               ))
