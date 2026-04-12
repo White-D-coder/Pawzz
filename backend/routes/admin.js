@@ -12,7 +12,7 @@ router.use(protect);
 router.use(requireRole('Admin'));
 
 router.get('/users', getAllUsers);
-router.put('/users/:userId', updateUser);
+router.put('/update-user/:userId', updateUser);
 router.delete('/delete-user/:userId', deleteUser);
 router.get('/volunteers', getVolunteers);
 router.patch('/volunteers/:id', updateVolunteerStatus);
