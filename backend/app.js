@@ -42,8 +42,12 @@ app.use(cors({
   origin: env.FRONTEND_URL,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'X-Requested-With', 'Accept'],
+  exposedHeaders: ['Set-Cookie']
 }));
+
+// Pre-flight OPTIONS handling
+app.options('*', cors());
 app.use(morgan('dev')); // Request Logging
 
 // Fix for Google OAuth popups COOP policy
