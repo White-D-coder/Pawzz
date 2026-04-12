@@ -2,17 +2,23 @@
 
 import React, { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Button } from '@/components/ui/Button';
 import axios from 'axios';
 
-type VolunteerForm = {
-  fullName: string;
-  email: string;
-  areaOfInterest: string;
-};
+const volunteerSchema = z.object({
+  fullName: z.string().min(2, "Full name must be at least 2 characters"),
+  email: z.string().email("Invalid email address"),
+  areaOfInterest: z.string().min(1, "Please select an area of interest")
+});
+
+type VolunteerForm = z.infer<typeof volunteerSchema>;
 
 export default function VolunteerPage() {
-  const { register, handleSubmit, formState: { errors } } = useForm<VolunteerForm>();
+  const { register, handleSubmit, formState: { errors } } = useForm<VolunteerForm>({
+    resolver: zodResolver(volunteerSchema)
+  });
   const [recordingState, setRecordingState] = useState<'idle' | 'recording' | 'review'>('idle');
   const [timer, setTimer] = useState(0);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);

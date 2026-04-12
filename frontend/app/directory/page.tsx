@@ -3,6 +3,16 @@ import Link from 'next/link';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import BookingTrigger from '@/components/directory/BookingTrigger';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Veterinary Directory | PAWZZ',
+  description: 'Search for trusted veterinary clinics, NGOs, and pet care services in your area.',
+  openGraph: {
+    title: 'Veterinary Directory | PAWZZ',
+    description: 'Search for trusted veterinary clinics, NGOs, and pet care services in your area.',
+  }
+};
 
 // SSR Fetch function
 async function getListings(searchParams: any) {

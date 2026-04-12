@@ -15,6 +15,19 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "PAWZZ | Connecting Pet Care, Together.",
   description: "The unified platform for clinics, NGOs, and volunteers.",
+  openGraph: {
+    title: 'PAWZZ | Connecting Pet Care',
+    description: 'The unified platform connecting veterinary clinics, NGOs, and volunteers to provide the best care for every pet.',
+    url: 'https://pawzz.in',
+    siteName: 'PAWZZ',
+    locale: 'en_IN',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'PAWZZ | Connecting Pet Care',
+    description: 'The unified platform connecting veterinary clinics, NGOs, and volunteers.',
+  },
 };
 
 export default function RootLayout({

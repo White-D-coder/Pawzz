@@ -1,3 +1,4 @@
+import express from 'express';
 import { getListings, createListing, verifyListing } from '../controllers/listingController.js';
 import { protect, requireRole } from '../middlewares/authMiddleware.js';
 import { validate, listingSchema } from '../validators/schemas.js';
