@@ -46,11 +46,28 @@ export default function NGODashboard() {
     fetchNGOData();
   }, []);
 
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 text-teal-900 font-bold uppercase tracking-[0.5em] animate-pulse">
-      🛡️ Syncing NGO operational hub...
-    </div>
-  );
+  if (loading) return <div className="min-h-screen flex items-center justify-center font-black animate-pulse text-teal-900 uppercase tracking-widest">Identifying NGO Administrator...</div>;
+
+  if (!user || user.role !== 'NGO' || !user.isApproved) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-center">
+        <div className="bg-white p-12 rounded-[3.5rem] shadow-cloud max-w-2xl border border-gray-100">
+           <div className="w-24 h-24 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-8 text-4xl shadow-sm rotate-12">🛡️</div>
+           <h1 className="text-4xl font-black text-gray-900 mb-4 tracking-tighter uppercase italic">Access <span className="text-purple-600">Restricted</span></h1>
+           <p className="text-gray-500 font-bold leading-relaxed mb-8">
+              Hello {user?.profile.name}! Your NGO administrative account is currently being vetted by the PAWZZ ethics board. 
+              We are verifying your non-profit registration to maintain the community's trust.
+           </p>
+           <div className="flex flex-col gap-3">
+              <div className="bg-purple-50 text-purple-700 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-purple-100 shadow-sm">
+                 Status: NGO Credential Verification In-Progress
+              </div>
+              <a href="/" className="text-teal-600 font-black uppercase text-[10px] tracking-widest hover:underline mt-6">Return to safety hub</a>
+           </div>
+        </div>
+      </div>
+    );
+  }
 
   const listing = data?.listing;
   const stats = data?.stats;

@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
   },
   role: { 
     type: String, 
-    enum: ['Pet Parent', 'Vet Clinic', 'NGO', 'Service Provider', 'Volunteer / City Lead', 'Admin'], 
+    enum: ['Pet Parent', 'Vet Clinic', 'NGO', 'Service Provider', 'Volunteer', 'Admin'], 
     required: true,
     default: 'Pet Parent'
   },
@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
   },
   requestedRole: {
     type: String,
-    enum: ['Pet Parent', 'Vet Clinic', 'NGO', 'Service Provider', 'Volunteer / City Lead', 'Admin'],
+    enum: ['Pet Parent', 'Vet Clinic', 'NGO', 'Service Provider', 'Volunteer', 'Admin'],
   },
   profile: {
     name: String,

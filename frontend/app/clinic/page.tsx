@@ -46,11 +46,28 @@ export default function ClinicDashboard() {
     }
   };
 
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 text-teal-900 font-bold uppercase tracking-[0.5em] animate-pulse">
-      🔐 Syncing encrypted healthcare records...
-    </div>
-  );
+  if (loading) return <div className="min-h-screen flex items-center justify-center font-black animate-pulse text-teal-900">IDENTIFYING PROFESSIONAL...</div>;
+
+  if (!user || user.role !== 'Vet Clinic' || !user.isApproved) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-center">
+        <div className="bg-white p-12 rounded-[3rem] shadow-cloud max-w-2xl border border-gray-100">
+           <div className="w-24 h-24 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-8 text-4xl">⏳</div>
+           <h1 className="text-4xl font-black text-gray-900 mb-4 tracking-tighter">Access <span className="text-amber-500">Restricted</span></h1>
+           <p className="text-gray-500 font-bold leading-relaxed mb-8">
+              Hello {user?.profile.name}! Your clinic account is currently under verification. 
+              Our admins are reviewing your medical credentials to ensure platform integrity.
+           </p>
+           <div className="flex flex-col gap-3">
+              <div className="bg-amber-50 text-amber-700 px-6 py-4 rounded-2xl text-sm font-black uppercase tracking-widest border border-amber-100">
+                 Status: Processing Verification
+              </div>
+              <a href="/" className="text-teal-600 font-black uppercase text-xs tracking-widest hover:underline mt-4">Back to home</a>
+           </div>
+        </div>
+      </div>
+    );
+  }
 
   const listing = data?.listing;
   const bookings = data?.bookings || [];

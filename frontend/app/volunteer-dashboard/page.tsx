@@ -7,8 +7,31 @@ import { io } from 'socket.io-client';
 import { AnimatePresence, motion } from 'framer-motion';
 
 export default function VolunteerDashboard() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const [sosAlert, setSosAlert] = useState<any>(null);
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center font-black animate-pulse text-teal-900 uppercase tracking-widest">Identifying Tribe Member...</div>;
+
+  if (!user || user.role !== 'Volunteer' || !user.isApproved) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-center">
+        <div className="bg-white p-12 rounded-[3.5rem] shadow-cloud max-w-2xl border border-gray-100">
+           <div className="w-24 h-24 bg-teal-50 rounded-full flex items-center justify-center mx-auto mb-8 text-4xl shadow-sm rotate-6">🌟</div>
+           <h1 className="text-4xl font-black text-gray-900 mb-4 tracking-tighter uppercase italic">Access <span className="text-teal-600">Restricted</span></h1>
+           <p className="text-gray-500 font-bold leading-relaxed mb-8">
+              Welcome to the family, {user?.profile.name}! Your volunteer application is currently under review. 
+              We'll notify you once our community leads verify your location and availability.
+           </p>
+           <div className="flex flex-col gap-3">
+              <div className="bg-teal-50 text-teal-700 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-teal-100 shadow-sm">
+                 Status: Joining the Circle of Hope
+              </div>
+              <a href="/" className="text-teal-600 font-black uppercase text-[10px] tracking-widest hover:underline mt-6">Return to home hub</a>
+           </div>
+        </div>
+      </div>
+    );
+  }
 
   useEffect(() => {
     const socket = io(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001', {
