@@ -38,10 +38,11 @@ const limiter = rateLimit({
 app.use(limiter);
 app.use(helmet()); // Secure Headers
 
-app.use(cors({ 
-  origin: env.FRONTEND_URL, 
+app.use(cors({
+  origin: env.FRONTEND_URL,
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
 }));
 app.use(morgan('dev')); // Request Logging
 
