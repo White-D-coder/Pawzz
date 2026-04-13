@@ -22,7 +22,7 @@ export default function AdminUsersPage() {
     try {
       setLoading(true);
       const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/admin/users`, { withCredentials: true });
-      setUsers(res.data.data.users || []);
+      setUsers((res.data as any).data.users || []);
     } catch (err) {
       console.error(err);
     } finally {

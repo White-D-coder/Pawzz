@@ -17,8 +17,8 @@ export default function NGODashboard() {
         axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/ngo/data`, { withCredentials: true }),
         axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/missions`, { withCredentials: true })
       ]);
-      setData(resData.data.data);
-      setMissions(resMissions.data.data.missions);
+      setData((resData.data as any).data);
+      setMissions((resMissions.data as any).data.missions);
     } catch (err) {
       console.error("Failed to fetch NGO data", err);
     } finally {
@@ -144,6 +144,15 @@ export default function NGODashboard() {
            </div>
 
            {/* NGO Specific Tools */}
+           <div className="lg:col-span-4 space-y-8">
+              <div className="bg-purple-600 p-8 rounded-[3rem] text-white shadow-cloud">
+                 <h4 className="font-black mb-6 uppercase tracking-widest text-[10px] opacity-80">Shelter Inventory</h4>
+                 <div className="space-y-6">
+                    <div>
+                       <div className="flex justify-between text-xs font-bold mb-2">
+                          <span className="opacity-60 uppercase">Dog Kennels</span>
+                          <span>9/10</span>
+                       </div>
                        <div className="h-3 bg-white/10 rounded-full overflow-hidden">
                           <div className="h-full w-[90%] bg-purple-400 rounded-full" />
                        </div>
@@ -158,7 +167,7 @@ export default function NGODashboard() {
                        </div>
                     </div>
                  </div>
-                 <Button className="w-full mt-10 bg-white text-purple-900 font-black rounded-2xl py-4 hover:bg-gray-100">Update Inventory</Button>
+                 <Button className="w-full mt-10 bg-white text-purple-900 font-black rounded-2xl py-4 hover:bg-gray-100 border-none">Update Inventory</Button>
               </div>
 
               <div className="bg-amber-100 p-8 rounded-[3rem] border border-amber-200">

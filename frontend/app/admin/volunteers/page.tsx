@@ -26,7 +26,7 @@ export default function AdminVolunteersPage() {
   const fetchVolunteers = async () => {
     try {
       const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/admin/volunteers`, { withCredentials: true });
-      setVolunteers(res.data.data.submissions || []);
+      setVolunteers((res.data as any).data.submissions || []);
     } catch (err) {
       console.error(err);
     } finally {

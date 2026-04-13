@@ -38,8 +38,8 @@ export default function AdminApprovePage() {
         axios.get(`${apiUrl}/api/admin/users/pending`, { withCredentials: true })
       ]);
 
-      setListings(listingsRes.data.data.listings || []);
-      setUsers(usersRes.data.data.users || []);
+      setListings((listingsRes.data as any).data.listings || []);
+      setUsers((usersRes.data as any).data.users || []);
     } catch (err) {
       console.error(err);
     } finally {

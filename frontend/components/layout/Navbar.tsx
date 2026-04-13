@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/Button';
 
@@ -59,8 +60,14 @@ const Navbar = () => {
                   <span className="text-sm font-bold text-teal-900 leading-none mb-1">{user.profile.name}</span>
                   <span className="text-[10px] font-bold text-amber-600 uppercase tracking-widest leading-none opacity-80">{user.role}</span>
                 </div>
-                <div className="w-12 h-12 rounded-2xl border-2 border-white shadow-sm overflow-hidden ring-4 ring-teal-50">
-                  <img src={user.profile.avatar} alt={user.profile.name} className="w-full h-full object-cover" />
+                <div className="w-12 h-12 rounded-2xl border-2 border-white shadow-sm overflow-hidden ring-4 ring-teal-50 relative">
+                  <Image 
+                    src={user.profile.avatar} 
+                    alt={user.profile.name} 
+                    fill
+                    className="object-cover"
+                    unoptimized={true}
+                  />
                 </div>
                 <button 
                   onClick={logout}

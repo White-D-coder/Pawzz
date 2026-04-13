@@ -24,9 +24,9 @@ export default function AdminBookingsPage() {
         axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/admin/bookings`, { withCredentials: true }),
         axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/bookings/settings`, { withCredentials: true })
       ]);
-      setBookings(bookingsRes.data.data.bookings || []);
-      if (settingsRes.data.data.settings?.timeSlots) {
-        setTimeSlots(settingsRes.data.data.settings.timeSlots.join(', '));
+      setBookings((bookingsRes.data as any).data.bookings || []);
+      if ((settingsRes.data as any).data.settings?.timeSlots) {
+        setTimeSlots((settingsRes.data as any).data.settings.timeSlots.join(', '));
       }
     } catch (err) {
       console.error(err);

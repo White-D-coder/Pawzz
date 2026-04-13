@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { Card } from '@/components/ui/Card';
 import BookingModal from '@/components/modals/BookingModal';
 import { useAuth } from '@/context/AuthContext';
@@ -38,16 +39,18 @@ export default function DirectoryContainer({ initialListings }: DirectoryContain
           return (
             <Card key={listing._id} className="flex flex-col h-full hover:shadow-cloud transition-all duration-300 rounded-[2rem]">
               <div className="h-48 w-full relative overflow-hidden text-center justify-items-center">
-                <img 
+                <Image 
                   src={listing.imageUrl || fallbackImage} 
                   alt={listing.name} 
+                  fill
                   className="w-full h-full object-cover"
+                  unoptimized={true}
                 />
-                <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-teal-800 text-[10px] font-black px-4 py-1.5 rounded-full shadow-sm uppercase tracking-widest border border-teal-100">
+                <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-teal-800 text-[10px] font-black px-4 py-1.5 rounded-full shadow-sm uppercase tracking-widest border border-teal-100 italic z-10">
                   {listing.type}
                 </div>
                 {listing.price > 0 && (
-                  <div className="absolute bottom-4 right-4 bg-teal-900 text-white text-xs font-black px-4 py-1.5 rounded-full shadow-lg">
+                  <div className="absolute bottom-4 right-4 bg-teal-900 text-white text-xs font-black px-4 py-1.5 rounded-full shadow-lg z-10">
                     ₹{listing.price}
                   </div>
                 )}
@@ -70,8 +73,8 @@ export default function DirectoryContainer({ initialListings }: DirectoryContain
                   )}
                 </div>
                 
-                <p className="text-sm text-gray-500 flex items-center gap-1.5 mb-4">
-                  <span className="text-teal-600">📍</span> {listing.location?.city || listing.location?.address || 'Location Hidden'}
+                <p className="text-sm text-gray-500 flex items-center gap-1.5 mb-4 font-bold">
+                   <span className="text-teal-600">📍</span> {listing.location?.city || listing.location?.address || 'Location Hidden'}
                 </p>
                 
                 <div className="flex flex-wrap gap-2 mb-4">

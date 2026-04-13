@@ -21,8 +21,8 @@ export default function AnalyticsPage() {
           axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/admin/volunteers`, { withCredentials: true })
         ]);
 
-        const bookings = bookingsRes.data.data.bookings || [];
-        const volunteers = volunteersRes.data.data.submissions || [];
+        const bookings = (bookingsRes.data as any).data.bookings || [];
+        const volunteers = (volunteersRes.data as any).data.submissions || [];
 
         // Simple aggregation logic for "City Distribution"
         // In a real app, this would be an aggregation pipeline in MongoDB

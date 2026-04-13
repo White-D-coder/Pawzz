@@ -22,7 +22,7 @@ export default function ClinicDashboard() {
   const fetchClinicData = async () => {
     try {
       const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/clinic/data`, { withCredentials: true });
-      setData(res.data.data);
+      setData((res.data as any).data);
     } catch (err) {
       console.error("Failed to fetch clinic data", err);
     } finally {
