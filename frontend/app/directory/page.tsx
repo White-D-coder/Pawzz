@@ -1,6 +1,11 @@
+'use dynamic';
+
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 import DirectoryContainer from '@/components/directory/DirectoryContainer';
 import DirectorySearch from '@/components/directory/DirectorySearch';
+
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Veterinary Directory | PAWZZ',
@@ -45,7 +50,9 @@ export default async function DirectoryPage({ searchParams }: { searchParams: an
           <p className="text-xl text-gray-600 font-medium max-w-2xl mx-auto">Discover veterinary clinics, NGOs, and service providers vetted for compassion and excellence.</p>
         </div>
         
-        <DirectorySearch />
+        <Suspense fallback={<div className="max-w-5xl mx-auto h-20 bg-white rounded-[2.5rem] animate-pulse" />}>
+          <DirectorySearch />
+        </Suspense>
       </section>
 
       {/* Listing Grid Hand-off to Client Container */}

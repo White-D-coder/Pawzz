@@ -8,11 +8,18 @@ interface User {
   id: string;
   email: string;
   role: string;
+  requestedRole?: string;
   isApproved: boolean;
   status: string;
   profile: {
     name: string;
     avatar: string;
+  };
+}
+
+interface AuthResponse {
+  data: {
+    user: User;
   };
 }
 
@@ -46,7 +53,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = async (googleToken: string, role?: string) => {
     try {
-      const response = await axios.post('/api/auth/login', { token: googleToken, role });
+      const response = await axios.post<AuthResponse>('/api/auth/login', { token: googleToken, role });
+      if (!response.data?.data?.user) {
+        throw new Error('Invalid login response');
+      }
       const userData = response.data.data.user;
       setUser(userData);
       return userData; // Returning user data for redirection logic
@@ -68,8 +78,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await axios.get('/api/auth/me');
-        setUser(response.data.data.user);
+        const response = await axios.get<AuthResponse>('/api/auth/me');
+        if (response.data?.data?.user) {
+          setUser(response.data.data.user);
+        }
       } catch (error) {
         setUser(null);
       } finally {

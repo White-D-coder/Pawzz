@@ -7,6 +7,37 @@ import { useAuth } from '@/context/AuthContext';
 import axios from 'axios';
 import Script from 'next/script';
 
+interface Slot {
+  time: string;
+  isLocked: boolean;
+  isBooked: boolean;
+}
+
+interface Listing {
+  _id: string;
+  price: number;
+  slots?: Slot[];
+}
+
+interface ListingResponse {
+  data: {
+    listing: Listing;
+  };
+}
+
+interface RazorpayOrder {
+  id: string;
+  amount: number;
+  currency: string;
+  receipt: string;
+}
+
+interface OrderResponse {
+  data: {
+    order: RazorpayOrder;
+  };
+}
+
 interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -27,13 +58,15 @@ export default function BookingModal({ isOpen, onClose, listingId, listingName }
 
   React.useEffect(() => {
     if (isOpen && listingId) {
-      axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/listings/${listingId}`)
+      axios.get<ListingResponse>(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/listings/${listingId}`)
         .then(res => {
-          const l = res.data.data.listing;
-          setListingPrice(l.price || 500);
-          if (l.slots) {
-            const available = l.slots.filter((s: any) => !s.isLocked && !s.isBooked).map((s: any) => s.time);
-            setTimeSlots(available);
+          if (res.data?.data?.listing) {
+            const l = res.data.data.listing;
+            setListingPrice(l.price || 500);
+            if (l.slots) {
+              const available = l.slots.filter((s) => !s.isLocked && !s.isBooked).map((s) => s.time);
+              setTimeSlots(available);
+            }
           }
         })
         .catch(err => console.error("Could not load clinic slots:", err));
@@ -47,10 +80,14 @@ export default function BookingModal({ isOpen, onClose, listingId, listingName }
     setError(null);
     try {
       // 1. Create Razorpay Order
-      const orderRes = await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/payment/orders`, {
+      const orderRes = await axios.post<OrderResponse>(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/payment/orders`, {
         amount: listingPrice,
         receipt: `rcpt_${listingId.slice(-4)}`
       }, { withCredentials: true });
+
+      if (!orderRes.data?.data?.order) {
+        throw new Error('Failed to create payment order');
+      }
 
       const orderData = orderRes.data.data.order;
 
