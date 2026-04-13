@@ -14,8 +14,10 @@ export const metadata: Metadata = {
 // SSR Fetch function
 async function getListings(searchParams: any) {
   try {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
+    console.log("🔍 [DEBUG] Fetching directory from:", apiUrl);
     const query = new URLSearchParams(searchParams).toString();
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/listings?${query}`, {
+    const res = await fetch(`${apiUrl}/api/listings?${query}`, {
       cache: 'no-store'
     });
     if (!res.ok) return [];
