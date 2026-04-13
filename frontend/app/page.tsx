@@ -62,31 +62,20 @@ export default function Home() {
             style={{ borderRadius: '60% 40% 30% 70% / 60% 30% 70% 40%' }}
           >
             <Image
-              src="/image/thumb.jpeg"
+              src="/image/ami.jpeg"
               alt="Caring for pets"
               fill
               className="object-cover object-bottom"
               priority
             />
-            {/* Overlay a soft gradient to match the vibe if needed */}
             <div className="absolute inset-0 bg-transparent mix-blend-overlay" />
           </div>
 
-          {/* Floating Movie Speech Bubble */}
-          <div className="absolute top-[10%] -left-8 md:-left-12 z-10 animate-bounce duration-[4000ms]">
-            <div
-              className="relative bg-[#D5EBE6] p-8 pb-10 shadow-lg flex flex-col items-center justify-center text-center max-w-[200px]"
-              style={{ borderRadius: '60% 40% 50% 50% / 50% 50% 40% 60%' }}
-            >
-              <span className="text-teal-950 font-black text-sm leading-snug tracking-tight mb-2">
-                Play the movie<br />and see how<br />we work!
-              </span>
-
-              {/* Play Button intersecting the bubble */}
-              <button className="absolute -bottom-6 w-14 h-14 bg-black rounded-full flex items-center justify-center shadow-2xl hover:scale-105 transition-transform group border-4 border-white">
-                <div className="w-0 h-0 border-t-[8px] border-t-transparent border-l-[12px] border-l-[#5CACEE] border-b-[8px] border-b-transparent ml-1 group-hover:border-l-[#8AB4F8] transition-colors" />
-              </button>
-            </div>
+          {/* Play Button - Centered or Floating */}
+          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 z-20">
+             <button className="w-16 h-16 bg-black rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform group border-4 border-white">
+                <div className="w-0 h-0 border-t-[10px] border-t-transparent border-l-[16px] border-l-[#5CACEE] border-b-[10px] border-b-transparent ml-1" />
+             </button>
           </div>
         </div>
       </section>
@@ -96,7 +85,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
           <div className="relative h-[500px] order-2 md:order-1">
             <div className="absolute inset-0 bg-teal-100/30 rounded-[3rem] -rotate-3 -z-10" />
-            <div className="absolute inset-0 overflow-hidden rounded-[3rem] shadow-cloud">
+            <div className="absolute inset-0 overflow-hidden rounded-[3rem] shadow-cloud bg-teal-50">
               <Image
                 src="/image/1.jpeg"
                 alt="Compassionate Vet"
