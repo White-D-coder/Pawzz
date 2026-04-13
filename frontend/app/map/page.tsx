@@ -25,7 +25,7 @@ export default function MapPage() {
       const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/map`, {
         withCredentials: true
       });
-      setData(res.data.data || { listings: [], volunteers: [] });
+      setData((res.data as any).data || { listings: [], volunteers: [] });
     } catch (err) {
       console.error("Map data fetch failed:", err);
     }

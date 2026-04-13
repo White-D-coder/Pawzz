@@ -23,7 +23,7 @@ export default function MyBookingsPage() {
         const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/bookings/my`, {
           withCredentials: true
         });
-        setBookings(res.data.data.bookings || []);
+        setBookings((res.data as any).data.bookings || []);
       } catch (err) {
         console.error("Failed to fetch bookings:", err);
       } finally {

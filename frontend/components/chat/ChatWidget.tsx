@@ -6,12 +6,32 @@ import { useAuth } from '@/context/AuthContext';
 import { io } from 'socket.io-client';
 import axios from 'axios';
 
+interface Message {
+  _id: string;
+  senderId: string;
+  receiverId: string;
+  content: string;
+  createdAt: string;
+}
+
+interface ChatResponse {
+  data: {
+    messages: Message[];
+  };
+}
+
+interface PostChatResponse {
+  data: {
+    message: Message;
+  };
+}
+
 const CHATBOT_ID = '000000000000000000000001';
 
 export default function ChatWidget() {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [socket, setSocket] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -44,10 +64,12 @@ export default function ChatWidget() {
     if (isOpen && user) {
       const fetchHistory = async () => {
         try {
-          const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/chat/${CHATBOT_ID}`, {
+          const res = await axios.get<ChatResponse>(`${process.env.NEXT_PUBLIC_API_URL}/api/chat/${CHATBOT_ID}`, {
             withCredentials: true
           });
-          setMessages(res.data.data.messages);
+          if (res.data?.data?.messages) {
+            setMessages(res.data.data.messages);
+          }
         } catch (err) {
           console.error("Failed to fetch history", err);
         }
@@ -72,13 +94,15 @@ export default function ChatWidget() {
     setNewMessage('');
 
     try {
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/chat`, {
+      const res = await axios.post<PostChatResponse>(`${process.env.NEXT_PUBLIC_API_URL}/api/chat`, {
         receiverId: CHATBOT_ID,
         content: content
       }, { withCredentials: true });
 
       // Add user message to UI immediately
-      setMessages(prev => [...prev, res.data.data.message]);
+      if (res.data?.data?.message) {
+        setMessages(prev => [...prev, res.data.data.message]);
+      }
       
       // The AI response will come via Socket.io
     } catch (err) {

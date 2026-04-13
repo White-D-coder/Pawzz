@@ -22,7 +22,7 @@ interface AuthContextType {
   isAuthOpen: boolean;
   openAuthModal: () => void;
   closeAuthModal: () => void;
-  login: (googleToken: string, role?: string) => Promise<void>;
+  login: (googleToken: string, role?: string) => Promise<User>;
   logout: () => Promise<void>;
 }
 
