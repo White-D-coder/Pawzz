@@ -37,8 +37,7 @@ export default function AdminUsersPage() {
   const handleAddAdmin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // In a real app, you'd have a separate endpoint for this
-      // For now, let's assume we can PATCH a user's role directly
+
       alert("Whitelist update logic activated. This email will now be recognized as Admin.");
       setNewAdminEmail('');
     } catch (err) {
@@ -95,12 +94,12 @@ export default function AdminUsersPage() {
       {/* Quick Add Admin */}
       <div className="bg-teal-950 p-8 rounded-[2.5rem] shadow-lg text-white">
         <h3 className="text-xl font-black mb-4 flex items-center gap-2">
-            <span>🛡️</span> Authorize New Admin
+          <span>🛡️</span> Authorize New Admin
         </h3>
         <form onSubmit={handleAddAdmin} className="flex gap-4">
-          <input 
-            type="email" 
-            placeholder="Official email address..." 
+          <input
+            type="email"
+            placeholder="Official email address..."
             className="flex-grow bg-white/10 border border-white/20 rounded-2xl px-6 py-4 text-sm font-bold placeholder:text-white/30 outline-none focus:ring-4 ring-teal-500/50 transition-all"
             value={newAdminEmail}
             onChange={(e) => setNewAdminEmail(e.target.value)}
@@ -131,49 +130,48 @@ export default function AdminUsersPage() {
                 <tr key={user._id} className="hover:bg-gray-50/50 transition-colors group">
                   <td className="px-8 py-6">
                     <div className="flex items-center gap-4">
-                       <img src={user.profile?.avatar} className="w-10 h-10 rounded-2xl shadow-sm border-2 border-white ring-4 ring-teal-50/50" alt="" />
-                       <div>
-                          <div className="text-gray-900 font-black tracking-tight">{user.profile?.name}</div>
-                          <div className="text-[10px] text-gray-400 font-extrabold uppercase mt-0.5">{user.email}</div>
-                       </div>
+                      <img src={user.profile?.avatar} className="w-10 h-10 rounded-2xl shadow-sm border-2 border-white ring-4 ring-teal-50/50" alt="" />
+                      <div>
+                        <div className="text-gray-900 font-black tracking-tight">{user.profile?.name}</div>
+                        <div className="text-[10px] text-gray-400 font-extrabold uppercase mt-0.5">{user.email}</div>
+                      </div>
                     </div>
                   </td>
                   <td className="px-8 py-6">
-                    <select 
+                    <select
                       value={user.role}
                       onChange={(e) => handleRoleChange(user._id, e.target.value)}
-                      className={`text-[10px] font-black uppercase tracking-widest outline-none cursor-pointer px-2 py-1 rounded-lg border-none ${
-                        user.role === 'Admin' ? 'text-teal-600 bg-teal-50' : 'text-gray-600 bg-gray-50'
-                      }`}
+                      className={`text-[10px] font-black uppercase tracking-widest outline-none cursor-pointer px-2 py-1 rounded-lg border-none ${user.role === 'Admin' ? 'text-teal-600 bg-teal-50' : 'text-gray-600 bg-gray-50'
+                        }`}
                     >
-                       <option value="Pet Parent">Pet Parent</option>
-                       <option value="Vet Clinic">Vet Clinic</option>
-                       <option value="NGO">NGO</option>
-                       <option value="Volunteer">Volunteer</option>
-                       <option value="Admin">Admin</option>
+                      <option value="Pet Parent">Pet Parent</option>
+                      <option value="Vet Clinic">Vet Clinic</option>
+                      <option value="NGO">NGO</option>
+                      <option value="Volunteer">Volunteer</option>
+                      <option value="Admin">Admin</option>
                     </select>
                   </td>
                   <td className="px-8 py-6">
                     {user.requestedRole ? (
                       <div className="flex items-center gap-3">
-                         <div className="flex flex-col">
-                            <span className="text-[9px] font-black text-amber-600 uppercase tracking-tighter italic">Requested Role:</span>
-                            <span className="text-xs font-black text-gray-900">{user.requestedRole}</span>
-                         </div>
-                         <div className="flex gap-1">
-                            <button 
-                               onClick={() => handleApprovalAction(user._id, true)}
-                               className="bg-teal-500 hover:bg-teal-600 text-white text-[9px] font-black uppercase px-3 py-1.5 rounded-xl shadow-sm transition-all"
-                            >
-                               Accept
-                            </button>
-                            <button 
-                               onClick={() => handleApprovalAction(user._id, false)}
-                               className="bg-gray-100 hover:bg-red-50 text-gray-400 hover:text-red-500 text-[9px] font-black uppercase px-3 py-1.5 rounded-xl transition-all"
-                            >
-                               Reject
-                            </button>
-                         </div>
+                        <div className="flex flex-col">
+                          <span className="text-[9px] font-black text-amber-600 uppercase tracking-tighter italic">Requested Role:</span>
+                          <span className="text-xs font-black text-gray-900">{user.requestedRole}</span>
+                        </div>
+                        <div className="flex gap-1">
+                          <button
+                            onClick={() => handleApprovalAction(user._id, true)}
+                            className="bg-teal-500 hover:bg-teal-600 text-white text-[9px] font-black uppercase px-3 py-1.5 rounded-xl shadow-sm transition-all"
+                          >
+                            Accept
+                          </button>
+                          <button
+                            onClick={() => handleApprovalAction(user._id, false)}
+                            className="bg-gray-100 hover:bg-red-50 text-gray-400 hover:text-red-500 text-[9px] font-black uppercase px-3 py-1.5 rounded-xl transition-all"
+                          >
+                            Reject
+                          </button>
+                        </div>
                       </div>
                     ) : (
                       <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider border
@@ -183,14 +181,14 @@ export default function AdminUsersPage() {
                     )}
                   </td>
                   <td className="px-8 py-6 text-right">
-                     <button 
-                       onClick={() => handleDelete(user._id)}
-                       className="p-3 text-red-300 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all opacity-0 group-hover:opacity-100"
-                     >
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                     </button>
+                    <button
+                      onClick={() => handleDelete(user._id)}
+                      className="p-3 text-red-300 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all opacity-0 group-hover:opacity-100"
+                    >
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
                   </td>
                 </tr>
               ))
