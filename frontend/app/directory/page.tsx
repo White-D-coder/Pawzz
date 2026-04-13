@@ -13,13 +13,18 @@ export const metadata: Metadata = {
 
 // SSR Fetch function
 async function getListings(searchParams: any) {
-  const query = new URLSearchParams(searchParams).toString();
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/listings?${query}`, {
-    cache: 'no-store' // SEO-friendly but dynamic
-  });
-  if (!res.ok) return [];
-  const json = await res.json();
-  return json.data?.listings || [];
+  try {
+    const query = new URLSearchParams(searchParams).toString();
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/listings?${query}`, {
+      cache: 'no-store'
+    });
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json.data?.listings || [];
+  } catch (error) {
+    console.error("❌ Directory Fetch Error:", error);
+    return [];
+  }
 }
 
 export default async function DirectoryPage({ searchParams }: { searchParams: any }) {
